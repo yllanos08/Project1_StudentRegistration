@@ -5,6 +5,14 @@ public class Profile implements Comparable<Profile> {
     private String lname;
     private Date dob;
 
+
+
+    public Profile (String fname, String lname, Date dob)
+    {
+        this.fname = fname;
+        this.lname = lname;
+        this.dob = dob;
+    }
     /**
      Compare two Profile objects and determine if they are equal.
      * @param obj   the reference object with which to compare.
@@ -22,15 +30,24 @@ public class Profile implements Comparable<Profile> {
     }
 
     /**
-     Compare the profiles to determine the order
+     Compare the profiles to determine the order based on last name -> first name -> then DOB
      * @param profile the object to be compared.
      * @return 1, -1, or 0
      */
     @Override
     public int compareTo(Profile profile)
     {
-
-       return 0; //if last names equal go to first
+        if(this.lname.compareTo(profile.lname) > 0) return 1;
+        if(this.lname.compareTo(profile.lname) < 0) return -1;
+        else {
+            if(this.fname.compareTo(profile.fname) > 0) return 1;
+            if(this.fname.compareTo(profile.fname) < 0) return -1;
+            else {
+                if(this.dob.compareTo(profile.dob) > 0) return 1;
+                if(this.dob.compareTo(profile.dob) <0 ) return -1;
+            }
+        }
+       return 0;
     }
 
     /**
@@ -41,5 +58,10 @@ public class Profile implements Comparable<Profile> {
     public String toString()
     {
         return lname + ", " + fname + ", " + dob;
+    }
+
+    public static void main (String[] args)
+    {
+        Profile p1 = new Profile("Toan", "Kevin",
     }
 }

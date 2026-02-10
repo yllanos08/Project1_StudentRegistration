@@ -15,7 +15,7 @@ public class Student implements Comparable<Student> {
     /**
      * Compare 2 Student Objects to see if they are equal.
      * @param obj   the reference object with which to compare.
-     * @return
+     * @return poop and piss CHANGE THIS AOIDHWIODOAI
      */
     @Override
     public boolean equals(Object obj){
