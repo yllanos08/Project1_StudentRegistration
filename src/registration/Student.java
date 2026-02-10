@@ -1,5 +1,10 @@
 package registration;
 
+/**
+ * Student obj with Profile, major, & credits completed
+ * @author Kevin & Ysabella
+ */
+
 public class Student implements Comparable<Student> {
     private Profile profile;
     private Major major;
@@ -37,7 +42,6 @@ public class Student implements Comparable<Student> {
     public String toString(){
         return this.profile.toString() + " " + this.major.toString() + " " + this.creditsCompleted;
     }
-
 
     /**
      * Compares student obj in order profile -> major -> creditscompleted
