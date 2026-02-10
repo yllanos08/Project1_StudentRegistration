@@ -46,9 +46,6 @@ public class Frontend {
         System.out.println("Registration System is Terminated.");
     }
 
-    /**
-     *
-     */
     private void setADD_CMD(String input){
         System.out.println("running add cmd");
     }
