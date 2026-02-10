@@ -1,5 +1,9 @@
 package registration;
 
+/**
+ Profile class
+ @author Ysabella Llanos, Kevin Toan
+ */
 public class Profile implements Comparable<Profile> {
     private String fname;
     private String lname;
@@ -62,6 +66,6 @@ public class Profile implements Comparable<Profile> {
 
     public static void main (String[] args)
     {
-        Profile p1 = new Profile("Toan", "Kevin",
+
     }
 }
