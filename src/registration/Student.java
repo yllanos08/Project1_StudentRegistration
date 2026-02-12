@@ -16,6 +16,15 @@ public class Student implements Comparable<Student> {
         this.creditsCompleted = creditsCompleted;
     }
 
+    public Profile getProfile(){
+        return profile;
+    }
+    public Major getMajor(){
+        return major;
+    }
+    public int getCreditsCompleted(){
+        return creditsCompleted;
+    }
 
     /**
      * Compare 2 Student Objects to see if they are equal.
