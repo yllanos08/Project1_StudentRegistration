@@ -1,5 +1,5 @@
 package registration;
 
-public enum Instructors {
 
+public enum Time {
 }

@@ -1,6 +1,6 @@
 package registration;
 
-public enum CourseInfo {
+public enum Course {
     CS100 (4, "Freshman"),
     CS200 (4, "Sophomore"),
     CS300 (4, "Junior", "CS major only"),
@@ -13,18 +13,29 @@ public enum CourseInfo {
     CCD (4, "Freshman"),
     HST (3, "Freshman");
 
-    private int creditHours;
-    private String yearPrereq;
-    private String majorPrereq;
+    public final int creditHours;
+    public final String yearPrereq;
+    public final String majorPrereq;
 
-    CourseInfo(int creditHours, String yearPrereq, String majorPrereq){
+    Course(int creditHours, String yearPrereq, String majorPrereq){
         this.creditHours = creditHours;
         this.yearPrereq = yearPrereq;
         this.majorPrereq = majorPrereq;
     }
 
-    CourseInfo(int creditHours, String yearPrereq){
+    Course(int creditHours, String yearPrereq){
         this.creditHours = creditHours;
         this.yearPrereq = yearPrereq;
+        this.majorPrereq = "N/A";
+    }
+
+    public int getCreditHours(){
+        return creditHours;
+    }
+    public String getYearPrereq(){
+        return yearPrereq;
+    }
+    public String getMajorPrereq() {
+        return majorPrereq;
     }
 }
