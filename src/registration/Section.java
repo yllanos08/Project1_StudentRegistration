@@ -20,6 +20,14 @@ public class Section {
         numStudents = 0;
     }
 
+    public Course getCourse(){return this.course;}
+    public Instructor getInstructor(){return this.instructor;}
+    public Classroom getClassroom(){return this.classroom;}
+    public Time getTime() {return this.time;}
+    public Student[] getRoster() {return this.roster;}
+
+
+
 
     /**
      * enroll student into class if class isn't full (doesn't check requirements)

@@ -61,8 +61,7 @@ public class Date implements Comparable <Date>
         }
         return false;
     }
-
-    /**
+ /**
      Compare dates to determine the order
      * @param date the object to be compared.
      * @return 1, -1, or 0
