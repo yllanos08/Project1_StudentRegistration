@@ -5,7 +5,7 @@ public class StudentList {
     private final static int CAPACITY = 4;
     private Student[] list;
 
-    //size is current # of entries in list
+    //size is current max size
     private int size;
 
 
@@ -30,6 +30,10 @@ public class StudentList {
     private void grow() {
         this.size += CAPACITY;
         Student[] newList = new Student[this.size];
+        for(int i = 0; i < list.length; i++){
+            newList[i] = list[i];
+        }
+        this.list = newList;
     }
 
     /**

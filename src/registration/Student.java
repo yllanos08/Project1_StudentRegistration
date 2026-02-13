@@ -10,6 +10,10 @@ public class Student implements Comparable<Student> {
     private Major major;
     private int creditsCompleted;
 
+    private final int FRESHMAN = 30;
+    private final int SOPHOMORE = 60;
+    private final int JUNIOR = 90;
+
     Student(Profile profile, Major major, int creditsCompleted){
         this.profile = profile;
         this.major = major;
@@ -26,6 +30,16 @@ public class Student implements Comparable<Student> {
         return creditsCompleted;
     }
 
+    /**
+     * finds school year of student < 30 = fresh, < 60 = soph, <90 = junior, 90+ = senior
+     * @return
+     */
+    public String schoolYear(){
+        if(creditsCompleted > JUNIOR) return "Senior";
+        else if(creditsCompleted > SOPHOMORE) return "Junior";
+        else if(creditsCompleted > FRESHMAN) return "Sophomore";
+        else return "Freshman";
+    }
     /**
      * Compare 2 Student Objects to see if they are equal.
      * @param obj   the reference object with which to compare.
@@ -47,9 +61,12 @@ public class Student implements Comparable<Student> {
      * format: profile + major + creditscompleted
      * @return string
      */
+
     @Override
     public String toString(){
-        return this.profile.toString() + " " + this.major.toString() + " " + this.creditsCompleted;
+        return "[" + profile.getFname() + " " + profile.getLname() + "]" + " "
+                + "[" + major + "," + major.getSchool() + "]" + " "
+                + "credits earned: " + creditsCompleted + "[" + schoolYear() + "]";
     }
 
     /**

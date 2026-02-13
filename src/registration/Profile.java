@@ -17,6 +17,16 @@ public class Profile implements Comparable<Profile> {
         this.lname = lname;
         this.dob = dob;
     }
+
+    public String getFname(){
+        return fname;
+    }
+    public String getLname(){
+        return lname;
+    }
+    public Date getDob(){
+        return dob;
+    }
     /**
      Compare two Profile objects and determine if they are equal.
      * @param obj   the reference object with which to compare.
