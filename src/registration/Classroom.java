@@ -8,8 +8,8 @@ public enum Classroom {
     AB2225 ("Academic Building", "College Avenue"),
     MU302 ("Murray Hall", "College Avenue");
 
-    public final String building;
-    public final String campus;
+    private final String building;
+    private final String campus;
 
     private Classroom(String building, String campus)
     {

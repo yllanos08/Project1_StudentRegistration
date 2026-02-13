@@ -7,10 +7,13 @@ public enum Major {
     ITI ("School of Communication and Information"),
     BAIT ("Rutgers Business School");
 
-    public final String school;
+    private final String school;
 
-    Major(String school){
+    Major(String school) {
         this.school = school;
     }
 
+    public String getSchool(){
+        return this.school;
+    }
 }
