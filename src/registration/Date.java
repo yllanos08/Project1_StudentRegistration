@@ -128,6 +128,10 @@ public class Date implements Comparable <Date>
     }
 
 
+    /**
+     Testbed to test isValid()
+     * @param args
+     */
     public static void main (String[] args)
     {
         Date d1 = new Date (2005, 1, 1);

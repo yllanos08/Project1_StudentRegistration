@@ -74,8 +74,35 @@ public class Profile implements Comparable<Profile> {
         return lname + ", " + fname + ", " + dob;
     }
 
+    /**
+     Testbed to test compareTo()
+     * @param args
+     */
     public static void main (String[] args)
     {
+        //3 test cases -1, 3 test cases 1, 1 test case 0
+        // last name diff, first name diff, dob diff (for both)
+        Profile p1 = new Profile("Adam", "Scott", new Date(2005,4,8));
+        Profile p2 = new Profile("Adam", "Tott", new Date(2005,4,8));
+        Profile p3 = new Profile("Bob", "Scott", new Date(2005, 4, 8));
+        Profile p4 = new Profile("Adam", "Scott", new Date(2005, 4, 9));
+        Profile p5 = new Profile("Adam", "Scott", new Date(2005,4,8));
+
+        System.out.println("Starting Test Cases...");
+        System.out.println("[EXPECTED OUTPUT: -1]");
+
+        System.out.println(p1.compareTo(p2));
+        System.out.println(p1.compareTo(p3));
+        System.out.println(p1.compareTo(p4));
+
+        System.out.println("[EXPECTED OUTPUT: 1]");
+
+        System.out.println(p2.compareTo(p1));
+        System.out.println(p3.compareTo(p1));
+        System.out.println(p4.compareTo(p1));
+
+        System.out.println("[EXPECTED OUTPUT: 0]");
+        System.out.println(p1.compareTo(p5));
 
     }
 }
