@@ -11,6 +11,15 @@ public class Schedule
     private final int SOPHOMORE = 60;
     private final int JUNIOR = 90;
 
+
+
+    Schedule()
+    {
+        this.numSections = 0;
+        this.sections = new Section[CAPACITY];
+    }
+
+    public Section[] getSections(){return sections;}
     /**
      Find a section in our current list
      * @param section section to be found

@@ -1,5 +1,7 @@
 package registration;
 import java.util.Scanner;
+import java.util.StringTokenizer;
+import java.util.Calendar;
 
 public class Frontend {
     final String ADD_CMD = "A";
@@ -9,6 +11,16 @@ public class Frontend {
     final String ENROLL_CMD = "E";
     final String DROP_CMD = "D";
     final String STOP_CMD = "Q";
+
+    final int PERIOD1 = 1;
+    final int PERIOD2 = 2;
+    final int PERIOD3 = 3;
+    final int PERIOD4 = 4;
+    final int PERIOD5 = 5;
+    final int PERIOD6 = 6;
+
+    Schedule schedule = new Schedule();
+    StudentList studentList = new StudentList();
 
     // keep under 40 lines
     public void run(){
@@ -46,17 +58,51 @@ public class Frontend {
         System.out.println("Registration System is Terminated.");
     }
 
-    private void setADD_CMD(String input){
+    private void setADD_CMD(String input)
+    {
         System.out.println("running add cmd");
+        Student addedStudent = new Student();
+        makeStudent(input, addedStudent);
+        Date dob = addedStudent.getProfile().getDob();
+        int creditsCompleted = addedStudent.getCreditsCompleted();
+
+
+        if(isValidDOB(dob) && !studentList.contains(addedStudent) && creditsCompleted > 0) studentList.add(addedStudent);
+
     }
-    private void setREMOVE_CMD(String input){
+    private void setREMOVE_CMD(String input)
+    {
         System.out.println("running remove cmd");
+        Student removeStudent = new Student();
+        makeStudent(input, removeStudent);
+
+        studentList.remove(removeStudent);
     }
-    private void setOFFER_CMD(String input){
+
+    private void setOFFER_CMD(String input)
+    {
         System.out.println("running offer cmd");
     }
-    private void setCLOSE_CMD(String input){
+    private void setCLOSE_CMD(String input)
+    {
         System.out.println("running close cmd");
+        StringTokenizer s =  new StringTokenizer(input);
+        String courseString = s.nextToken();
+        int periodInt = Integer.parseInt(s.nextToken());
+        //check if period is valid
+        if(periodInt < 0 || periodInt > 6) return; //exit
+        if(!containsCourse(courseString)) return;
+
+        Course course = Course.valueOf(courseString);
+        Time period = getPeriod(periodInt);
+
+        //if we made it here then those two are valid, find course to be removed
+
+        for(Section section: schedule.getSections()) //loop through sections
+        {
+            if(section.getCourse().equals(course) && section.getTime().equals(period)) schedule.remove(section);
+        }
+
     }
     private void setENROLL_CMD(String input){
         System.out.println("running enroll cmd");
@@ -64,5 +110,100 @@ public class Frontend {
     private void setDROP_CMD(String input){
         System.out.println("running drop cmd");
     }
+
+    /**
+     Check if provided DOB is valid
+     * @param dob given DOB
+     * @return true if DOB is valid, false otherwise
+     */
+    private boolean isValidDOB (Date dob)
+    {
+        Calendar calRightNow = Calendar.getInstance();
+        Date rightNow = new Date(calRightNow.get(Calendar.YEAR), calRightNow.get(Calendar.MONTH), calRightNow.get(Calendar.DATE));
+        return (dob.isValid() && (rightNow.compareTo(dob) > 0));
+    }
+
+    /**
+     Check if given major is valid
+     * @param name major to be checked
+     * @return true if major found in enum, false otherwise
+     */
+    private static boolean containsMajor(String name)
+    {
+        for(Major major: Major.values())
+        {
+            if(major.name().equalsIgnoreCase(name)) return true;
+        }
+        return false;
+    }
+
+    private Time getPeriod(int p){
+        Time period = null;
+
+        return switch (p) {
+            case PERIOD1 -> Time.PERIOD1;
+            case PERIOD2 -> Time.PERIOD2;
+            case PERIOD3 -> Time.PERIOD3;
+            case PERIOD4 -> Time.PERIOD4;
+            case PERIOD5 -> Time.PERIOD5;
+            case PERIOD6 -> Time.PERIOD6;
+            default -> period;
+        };
+
+    }
+
+    /**
+     Check if given course is valid
+     * @param name course to be checked
+     * @return true if course found in enum, false otherwise
+     */
+    private static boolean containsCourse(String name)
+    {
+        for(Course course: Course.values())
+        {
+            if(course.name().equalsIgnoreCase(name)) return true;
+        }
+        return false;
+    }
+
+
+    /**
+     Fill student attributes using input
+     * @param input input provided
+     * @param student student to be made/finished
+     */
+    private static void makeStudent(String input, Student student)
+    {
+        StringTokenizer s =  new StringTokenizer(input);
+        String fname = s.nextToken();
+        String lname = s.nextToken();
+        String dobString = s.nextToken();
+        String majorString = s.nextToken();
+        int creditsCompleted = Integer.parseInt(s.nextToken());
+        //check and make major
+        Major major;
+        if(containsMajor(majorString))
+        {
+            major = Major.valueOf(majorString);
+        }
+        else return;
+
+        StringTokenizer dobToken = new StringTokenizer(dobString);
+        int month = Integer.parseInt(dobToken.nextToken("/"));
+        int day = Integer.parseInt(dobToken.nextToken("/"));
+        int year = Integer.parseInt(dobToken.nextToken("/"));
+
+        Date dob = new Date(year, month, day);
+
+        Profile addedProfile = new Profile (fname, lname, dob);
+
+        student.setProfile(addedProfile);
+        student.setMajor(major);
+        student.setCreditsCompleted(creditsCompleted);
+    }
+
+
+
+
 
 }
