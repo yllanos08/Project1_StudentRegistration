@@ -13,6 +13,11 @@ public class StudentList {
         this.size = 0;
         this.list = new Student[CAPACITY];
     }
+
+    public Student[] getList() {
+        return list;
+    }
+
     /**
      * find specific student
      * @param student student TBF (to be found)

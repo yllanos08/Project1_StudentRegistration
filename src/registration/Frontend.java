@@ -73,9 +73,7 @@ public class Frontend {
     private void setREMOVE_CMD(String input)
     {
         System.out.println("running remove cmd");
-        Student removeStudent = new Student();
-        makeStudent(input, removeStudent);
-
+        Student removeStudent = findStudent(input);
         studentList.remove(removeStudent);
     }
 
@@ -106,9 +104,65 @@ public class Frontend {
     }
     private void setENROLL_CMD(String input){
         System.out.println("running enroll cmd");
+        Student student = findStudent(input); //this is student we want to enroll
+
+        StringTokenizer s =  new StringTokenizer(input);
+        //skip name and dob
+        s.nextToken(); s.nextToken(); s.nextToken();
+
+        //maybe make this into helper later if we want im just writing to finish it (ik its duped from one above)
+        String courseString = s.nextToken();
+        int periodInt = Integer.parseInt(s.nextToken());
+        //check if period is valid
+        if(periodInt < 0 || periodInt > 6) return; //exit
+        if(!containsCourse(courseString)) return;
+
+        Course course = Course.valueOf(courseString);
+        Time period = getPeriod(periodInt);
+
+        Section section = null;
+        for(Section sec: schedule.getSections()) //loop through sections
+        {
+            if(sec.getCourse().equals(course) && sec.getTime().equals(period)) section = sec;
+        }
+
+        if(studentList.contains(student) && section != null) // student list has student and section exists, enroll
+        {
+            schedule.enroll(section, student);
+        }
+
+
     }
+
     private void setDROP_CMD(String input){
         System.out.println("running drop cmd");
+
+        Student student = findStudent(input); //this is student we want to drop from sec
+        StringTokenizer s =  new StringTokenizer(input);
+        //skip name and dob
+        s.nextToken(); s.nextToken(); s.nextToken();
+
+        //maybe make this into helper later if we want im just writing to finish it (ik its duped from one above)
+        String courseString = s.nextToken();
+        int periodInt = Integer.parseInt(s.nextToken());
+        //check if period is valid
+        if(periodInt < 0 || periodInt > 6) return; //exit
+        if(!containsCourse(courseString)) return;
+
+        Course course = Course.valueOf(courseString);
+        Time period = getPeriod(periodInt);
+
+        Section section = null;
+        for(Section sec: schedule.getSections()) //loop through sections
+        {
+            if(sec.getCourse().equals(course) && sec.getTime().equals(period)) section = sec;
+        }
+
+        if(studentList.contains(student) && section != null) // student list has student and section exists, enroll
+        {
+            schedule.drop(section, student);
+        }
+
     }
 
     /**
@@ -155,7 +209,7 @@ public class Frontend {
     /**
      Check if given course is valid
      * @param name course to be checked
-     * @return true if course found in enum, false otherwise
+     * @return true if the course is found in enum, false otherwise
      */
     private static boolean containsCourse(String name)
     {
@@ -166,7 +220,34 @@ public class Frontend {
         return false;
     }
 
+    /**
+     Find student using their name and DOB
+     * @param input Student's first name, last name, and DOB in one string
+     * @return student that matches input, null otherwise
+     */
+    private Student findStudent(String input)
+    {
+        Student student = new Student();
+        StringTokenizer str =  new StringTokenizer(input);
+        String fname = str.nextToken();
+        String lname = str.nextToken();
+        String dobString = str.nextToken();
 
+        StringTokenizer dobToken = new StringTokenizer(dobString);
+        int month = Integer.parseInt(dobToken.nextToken("/"));
+        int day = Integer.parseInt(dobToken.nextToken("/"));
+        int year = Integer.parseInt(dobToken.nextToken("/"));
+
+        Date dob = new Date(year, month, day);
+
+        Profile profile = new Profile (fname, lname, dob);
+        for(Student s : studentList.getList())
+        {
+            if(s.getProfile().equals(profile)) student = s;
+        }
+
+        return student;
+    }
     /**
      Fill student attributes using input
      * @param input input provided
