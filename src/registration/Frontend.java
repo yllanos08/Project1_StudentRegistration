@@ -15,7 +15,9 @@ public class Frontend {
     final String CLOSE_CMD = "C";
     final String ENROLL_CMD = "E";
     final String DROP_CMD = "D";
+    final String PRINT_CMD = "P";
     final String STOP_CMD = "Q";
+
 
     final int PERIOD1 = 1;
     final int PERIOD2 = 2;
@@ -51,7 +53,9 @@ public class Frontend {
                     setENROLL_CMD(input);
                 } else if (inputCmd.equals(DROP_CMD)) {
                     setDROP_CMD(input);
-                } else if (inputCmd.equals(STOP_CMD)) {
+                } else if(inputCmd.equals(PRINT_CMD)){
+                    setPRINT_CMD(input.substring(1,2));
+                }else if (inputCmd.equals(STOP_CMD)) {
                     break;
                 }
                 //ERROR
@@ -168,6 +172,36 @@ public class Frontend {
             schedule.drop(section, student);
         }
 
+    }
+
+    private void setPRINT_CMD(String input)
+    {
+        if(input.equals("S")) PS_CMD();
+        if(input.equals("L")) PL_CMD();
+        if(input.equals("C")) PC_CMD();
+    }
+    /**
+     Print list of students ordered by last name, first name, then DOB
+     */
+    private void PS_CMD()
+    {
+        studentList.print();
+    }
+
+    /**
+     Print list of sections ordered by campus then building
+     */
+    private void PL_CMD()
+    {
+        schedule.printByClassroom();
+    }
+
+    /**
+    Print list of sections ordered by course number then period
+     */
+    private void PC_CMD()
+    {
+        schedule.printByCourse();
     }
 
     /**
