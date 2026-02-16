@@ -3,6 +3,11 @@ import java.util.Scanner;
 import java.util.StringTokenizer;
 import java.util.Calendar;
 
+/**
+ User interface class to process command lines
+ @author Ysabella Llanos, Kevin Toan
+ */
+
 public class Frontend {
     final String ADD_CMD = "A";
     final String REMOVE_CMD = "R";
@@ -191,6 +196,11 @@ public class Frontend {
         return false;
     }
 
+    /**
+     Get Time using int
+     * @param p integer version of period
+     * @return period as a Time enum
+     */
     private Time getPeriod(int p){
         Time period = null;
 

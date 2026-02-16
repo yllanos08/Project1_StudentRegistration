@@ -1,5 +1,9 @@
 package registration;
 
+/**
+ Schedule class
+ @author Ysabella Llanos, Kevin Toan
+ */
 public class Schedule
 {
     private static final int NOT_FOUND = -1;
@@ -12,7 +16,9 @@ public class Schedule
     private final int JUNIOR = 90;
 
 
-
+    /**
+     Constructor
+     */
     Schedule()
     {
         this.numSections = 0;

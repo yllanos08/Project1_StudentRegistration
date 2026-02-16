@@ -1,6 +1,12 @@
 package registration;
 
+/**
+ Section class
+ @author Kevin Toan, Ysabella Llanos
+ */
+
 import java.util.StringTokenizer;
+
 public class Section {
     private final static int CAPACITY = 4; //sections only have max 4 students CANNOT BE INCREASED
     private Course course;
@@ -10,6 +16,13 @@ public class Section {
     private Student[] roster;
     private int numStudents;
 
+    /**
+     Parameterized constructor
+     * @param course
+     * @param instructor
+     * @param classroom
+     * @param time
+     */
     Section(Course course, Instructor instructor, Classroom classroom, Time time){
         this.course = course;
         this.instructor = instructor;
@@ -94,6 +107,12 @@ public class Section {
         }
     }
 
+
+    /**
+     Compare 2 Section objects to see if they are equal.
+     * @param obj   the reference object with which to compare.
+     * @return true if period and major prereqs are the same; false otherwise
+     */
     @Override
     public boolean equals(Object obj){
         if(obj instanceof Section){
@@ -104,6 +123,10 @@ public class Section {
         return false;
     }
 
+    /**
+     Return a string including all values
+     * @return textual representation of the Section
+     */
     @Override
     public String toString(){
         return "[" + course.getMajorPrereq() + " " + time.getStart() + "]" + " "

@@ -2,7 +2,7 @@ package registration;
 
 /**
  * Student obj with Profile, major, & credits completed
- * @author Kevin & Ysabella
+ * @author Kevin Toan, Ysabella Llanos
  */
 
 public class Student implements Comparable<Student> {
@@ -37,7 +37,7 @@ public class Student implements Comparable<Student> {
 
     /**
      * finds school year of student < 30 = fresh, < 60 = soph, <90 = junior, 90+ = senior
-     * @return
+     * @return school year of student in a String
      */
     public String schoolYear(){
         if(creditsCompleted > JUNIOR) return "Senior";
@@ -48,7 +48,7 @@ public class Student implements Comparable<Student> {
     /**
      * Compare 2 Student Objects to see if they are equal.
      * @param obj   the reference object with which to compare.
-     * @return poop and piss CHANGE THIS AOIDHWIODOAI
+     * @return true if major and creditsCompleted are equal; false otherwise
      */
     @Override
     public boolean equals(Object obj){

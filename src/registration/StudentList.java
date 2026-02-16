@@ -1,5 +1,9 @@
 package registration;
 
+/**
+ StudentList class
+ @author Kevin Toan, Ysabella Llanos
+ */
 public class StudentList {
     private static final int NOT_FOUND = -1;
     private final static int CAPACITY = 4;
@@ -8,7 +12,9 @@ public class StudentList {
     //size is current max size
     private int size;
 
-
+    /**
+     Constructor
+     */
     StudentList(){
         this.size = 0;
         this.list = new Student[CAPACITY];
