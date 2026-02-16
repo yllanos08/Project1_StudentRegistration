@@ -174,35 +174,18 @@ public class Frontend {
 
     }
 
+    /**
+     Print out information based on input (either studentList or schedule ordered by location or course)
+     * @param input Specifies what information to print and how it is ordered
+     */
     private void setPRINT_CMD(String input)
     {
-        if(input.equals("S")) PS_CMD();
-        if(input.equals("L")) PL_CMD();
-        if(input.equals("C")) PC_CMD();
-    }
-    /**
-     Print list of students ordered by last name, first name, then DOB
-     */
-    private void PS_CMD()
-    {
-        studentList.print();
+        if(input.equals("S")) studentList.print();
+        if(input.equals("L")) schedule.printByClassroom();
+        if(input.equals("C")) schedule.printByCourse();
     }
 
-    /**
-     Print list of sections ordered by campus then building
-     */
-    private void PL_CMD()
-    {
-        schedule.printByClassroom();
-    }
 
-    /**
-    Print list of sections ordered by course number then period
-     */
-    private void PC_CMD()
-    {
-        schedule.printByCourse();
-    }
 
     /**
      Check if provided DOB is valid
