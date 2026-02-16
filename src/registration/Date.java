@@ -105,6 +105,10 @@ public class Date implements Comparable <Date>
             {
                 return this.year % QUATERCENTENNIAL == 0;
             }
+            else
+            {
+                return true;
+            }
         }
         return false;
     }
@@ -127,8 +131,35 @@ public class Date implements Comparable <Date>
     public static void main (String[] args)
     {
         Date d1 = new Date (2005, 1, 1);
-        System.out.println(d1.rightNow);
         System.out.println("CURRENT DATE IS: " + d1.currMonth + "/" + d1.currDate + "/" + d1.currYear);
+        System.out.println(d1.toString());
+
+        System.out.println("isValid() testing, [FALSE] test cases (4):");
+        //invalid 1: 2/29/25 (non leap year)
+        Date d2 = new Date (2025, 2, 29);
+        System.out.println(d2.isValid());
+
+        //invalid 2: 1/32/25 (extra 1/32 is not a valid date)
+        Date d3 = new Date (2025, 1, 32);
+        System.out.println(d3.isValid());
+
+        //invalid 3: 6/31/25 (6/31 is not a valid date, non 31 month)
+        Date d4 = new Date (2025, 6, 31);
+        System.out.println(d4.isValid());
+
+        //invalid 4: 13/30/25 (13 is not a valid month, not valid month)
+        Date d5 = new Date (2025, 13, 30);
+        System.out.println(d5.isValid());
+
+        System.out.println("[TRUE] test cases (2):");
+        //valid 1: 2/29/24, valid leap year
+        Date d6 = new Date (2024, 2, 29);
+        System.out.println(d6.isValid());
+
+        //valid 2: 12/31/25, valid date
+        Date d7 = new Date(2025, 12, 31);
+        System.out.println(d7.isValid());
+
     }
 }
 
