@@ -25,6 +25,10 @@ public class Schedule
         this.sections = new Section[CAPACITY];
     }
 
+    /**
+     * get method for sections
+     * @return list of sections in this.schedule
+     */
     public Section[] getSections(){return sections;}
     /**
      Find a section in our current list
@@ -106,7 +110,7 @@ public class Schedule
         //do nothing if max credits will be exceeded, prereqs not met, time conflict, and alr enrolled
         if(checkCreditCount(student) + section.getCourse().getCreditHours() > 18) return; //if max credits exceeded
         if(duplicateCourse(section, student)) return;
-        if(studentTimeConflict(section, student)) return;
+        if(checkStudentTimeConflict(section, student)) return;
         if(metPrereq(section, student))
         {
             section.enroll(student);
@@ -241,7 +245,7 @@ public class Schedule
      @param student student to check conflict
      @return true if there is a time conflict, false otherwise
      */
-    private boolean studentTimeConflict(Section section, Student student)
+    private boolean checkStudentTimeConflict(Section section, Student student)
     {
         for(int i = 0; i < numSections; i++)
         {

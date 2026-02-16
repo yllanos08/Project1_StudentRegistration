@@ -49,8 +49,5 @@ public enum Course {
         return s.nextToken();
     }
 
-//    public String getCourseNumber(){
-//
-//    }
 
 }
