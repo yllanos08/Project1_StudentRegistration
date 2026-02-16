@@ -106,10 +106,17 @@ public class StudentList {
     private void sort(){
         for(int i = 0; i < this.size; i++){
             Student smallestStu = this.list[i];
+            int index = 0;
             for(int j = 0; j < this.size; j++){
-                if(smallestStu.compareTo(this.list[j]) > 0) smallestStu = this.list[j];
+                if(smallestStu.compareTo(this.list[j]) > 0)
+                {
+                    smallestStu = this.list[j];
+                    index = j;
+                }
             }
+            Student temp = this.list[i];
             this.list[i] = smallestStu;
+            this.list[index] = temp;
         }
     }
 

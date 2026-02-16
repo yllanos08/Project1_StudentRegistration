@@ -46,6 +46,10 @@ public class Date implements Comparable <Date>
         this.day = day;
     }
 
+    public int getYear(){return this.year;}
+    public int getMonth(){return this.month;}
+    public int getDay(){return this.day;}
+
     /**
      Compare two Date objects and determine if they are equal
      * @param obj   the reference object with which to compare.

@@ -15,7 +15,9 @@ public class Frontend {
     final String CLOSE_CMD = "C";
     final String ENROLL_CMD = "E";
     final String DROP_CMD = "D";
+    final String PRINT_CMD = "P";
     final String STOP_CMD = "Q";
+
 
     final int PERIOD1 = 1;
     final int PERIOD2 = 2;
@@ -51,7 +53,9 @@ public class Frontend {
                     setENROLL_CMD(input);
                 } else if (inputCmd.equals(DROP_CMD)) {
                     setDROP_CMD(input);
-                } else if (inputCmd.equals(STOP_CMD)) {
+                } else if(inputCmd.equals(PRINT_CMD)){
+                    setPRINT_CMD(input.substring(1,2));
+                }else if (inputCmd.equals(STOP_CMD)) {
                     break;
                 }
                 //ERROR
@@ -103,7 +107,7 @@ public class Frontend {
 
         for(Section section: schedule.getSections()) //loop through sections
         {
-            if(section.getCourse().equals(course) && section.getTime().equals(period)) schedule.remove(section);
+            if(section.getCourse().equals(course) && section.getTime().equals(period) && section.getNumStudents() != 0) schedule.remove(section);
         }
 
     }
@@ -171,6 +175,19 @@ public class Frontend {
     }
 
     /**
+     Print out information based on input (either studentList or schedule ordered by location or course)
+     * @param input Specifies what information to print and how it is ordered
+     */
+    private void setPRINT_CMD(String input)
+    {
+        if(input.equals("S")) studentList.print();
+        if(input.equals("L")) schedule.printByClassroom();
+        if(input.equals("C")) schedule.printByCourse();
+    }
+
+
+
+    /**
      Check if provided DOB is valid
      * @param dob given DOB
      * @return true if DOB is valid, false otherwise
@@ -178,8 +195,24 @@ public class Frontend {
     private boolean isValidDOB (Date dob)
     {
         Calendar calRightNow = Calendar.getInstance();
-        Date rightNow = new Date(calRightNow.get(Calendar.YEAR), calRightNow.get(Calendar.MONTH), calRightNow.get(Calendar.DATE));
+        int currYear = calRightNow.get(Calendar.YEAR);
+        int currMonth = calRightNow.get(Calendar.MONTH);
+        int currDay = calRightNow.get(Calendar.DATE);
+        Date rightNow = new Date(currYear, currMonth, currDay);
+
+        //16 y/o check
+        if(currYear - dob.getYear() < 16) return false;
+        else if(currYear - dob.getYear() == 16)
+        {
+            if(currMonth < dob.getMonth()) return false;
+            else if (currMonth == dob.getMonth())
+            {
+                if(currDay < dob.getDay()) return false;
+            }
+        }
+        //make sure dob is valid calendar date
         return (dob.isValid() && (rightNow.compareTo(dob) > 0));
+
     }
 
     /**
