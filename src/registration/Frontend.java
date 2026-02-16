@@ -103,7 +103,7 @@ public class Frontend {
 
         for(Section section: schedule.getSections()) //loop through sections
         {
-            if(section.getCourse().equals(course) && section.getTime().equals(period)) schedule.remove(section);
+            if(section.getCourse().equals(course) && section.getTime().equals(period) && section.getNumStudents() != 0) schedule.remove(section);
         }
 
     }
@@ -178,8 +178,24 @@ public class Frontend {
     private boolean isValidDOB (Date dob)
     {
         Calendar calRightNow = Calendar.getInstance();
-        Date rightNow = new Date(calRightNow.get(Calendar.YEAR), calRightNow.get(Calendar.MONTH), calRightNow.get(Calendar.DATE));
+        int currYear = calRightNow.get(Calendar.YEAR);
+        int currMonth = calRightNow.get(Calendar.MONTH);
+        int currDay = calRightNow.get(Calendar.DATE);
+        Date rightNow = new Date(currYear, currMonth, currDay);
+
+        //16 y/o check
+        if(currYear - dob.getYear() < 16) return false;
+        else if(currYear - dob.getYear() == 16)
+        {
+            if(currMonth < dob.getMonth()) return false;
+            else if (currMonth == dob.getMonth())
+            {
+                if(currDay < dob.getDay()) return false;
+            }
+        }
+        //make sure dob is valid calendar date
         return (dob.isValid() && (rightNow.compareTo(dob) > 0));
+
     }
 
     /**

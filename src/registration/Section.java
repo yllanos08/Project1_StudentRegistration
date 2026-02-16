@@ -39,6 +39,8 @@ public class Section {
     public Time getTime() {return this.time;}
     public Student[] getRoster() {return this.roster;}
 
+    public int getNumStudents(){return this.numStudents;}
+
 
 
 
