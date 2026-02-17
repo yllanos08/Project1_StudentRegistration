@@ -34,27 +34,31 @@ public class Frontend {
         String onRunMsg = "Registration System is Running";
         System.out.println(onRunMsg);
         Scanner sc = new Scanner(System.in);
-        String input,inputCmd;
+        String input;
+        String[] inputParts;
+        String inputCmd;
+        String inputParam;
         //loop forever unless stopped
         while (true) {
             if (sc.hasNextLine()) {
                 input = sc.nextLine();
-                inputCmd = input.substring(0, 1); //get first letter
-                input = input.substring(1);
+                inputParts = input.split("\\s", 2);
+                inputCmd = inputParts[0];
+                inputParam = (inputParts.length > 1) ? inputParts[1] : "";
                 if (inputCmd.equals(ADD_CMD)) {
-                    setADD_CMD(input);
+                    setADD_CMD(inputParam);
                 } else if (inputCmd.equals(REMOVE_CMD)) {
-                    setREMOVE_CMD(input);
+                    setREMOVE_CMD(inputParam);
                 } else if (inputCmd.equals(OFFER_CMD)) {
-                    setOFFER_CMD(input);
+                    setOFFER_CMD(inputParam);
                 } else if (inputCmd.equals(CLOSE_CMD)) {
-                    setCLOSE_CMD(input);
+                    setCLOSE_CMD(inputParam);
                 } else if (inputCmd.equals(ENROLL_CMD)) {
-                    setENROLL_CMD(input);
+                    setENROLL_CMD(inputParam);
                 } else if (inputCmd.equals(DROP_CMD)) {
-                    setDROP_CMD(input);
-                } else if(inputCmd.equals(PRINT_CMD)){
-                    setPRINT_CMD(input.substring(1,2));
+                    setDROP_CMD(inputCmd);
+                } else if(inputCmd.equals("PC") || inputCmd.equals("PS") || inputCmd.equals("PL")){
+                    setPRINT_CMD(inputCmd);
                 }else if (inputCmd.equals(STOP_CMD)) {
                     break;
                 }
@@ -66,7 +70,8 @@ public class Frontend {
         }
         System.out.println("Registration System is Terminated.");
     }
-/*
+
+    /*
 ===========================================================
                   Start of Main Functions
 ===========================================================
@@ -81,9 +86,21 @@ public class Frontend {
         Student addedStudent = new Student();
         makeStudent(input, addedStudent);
         Date dob = addedStudent.getProfile().getDob();
+
         int creditsCompleted = addedStudent.getCreditsCompleted();
 
-        if(isValidDOB(dob) && !studentList.contains(addedStudent) && creditsCompleted > 0) studentList.add(addedStudent);
+        if(validateDOB(dob) == 0) System.out.println("INVALID: " + dob + " younger than 16 years old.");
+        if(validateDOB(dob) == -1) System.out.println("INVALID: " + dob + " cannot be today or a future date.");
+        if(validateDOB(dob) == -2) System.out.println("INVALID: " + dob + " is not a valid calendar date!" );
+        if(studentList.contains(addedStudent)) System.out.println("[" + addedStudent.getProfile().getFname() + " " + addedStudent.getProfile().getLname() + " "
+                + dob + "]" +
+                " " + "student is already in the list");
+        if(validateDOB(dob) == 1 && !studentList.contains(addedStudent) && creditsCompleted > 0){
+            studentList.add(addedStudent);
+            System.out.println("[" + addedStudent.getProfile().getFname() + " " + addedStudent.getProfile().getLname() + " "
+                    + dob + "]" +
+                    " " + "added to the list");
+        }
 
     }
 
@@ -253,19 +270,20 @@ public class Frontend {
      */
     private void setPRINT_CMD(String input)
     {
-        if(input.equals("S")) studentList.print();
-        if(input.equals("L")) schedule.printByClassroom();
-        if(input.equals("C")) schedule.printByCourse();
+        System.out.println("running print: " + input);
+        if(input.equals("PS")) studentList.print();
+        if(input.equals("PL")) schedule.printByClassroom();
+        if(input.equals("PC")) schedule.printByCourse();
     }
 
 
 
     /**
-     Check if provided DOB is valid
+     * Check if provided DOB is valid
      * @param dob given DOB
-     * @return true if DOB is valid, false otherwise
+     * @return 1 if valid DOB, 0 if younger than 16, -1 if date is in the future, -2 if notvalid
      */
-    private boolean isValidDOB (Date dob)
+    private int validateDOB(Date dob)
     {
         Calendar calRightNow = Calendar.getInstance();
         int currYear = calRightNow.get(Calendar.YEAR);
@@ -273,19 +291,23 @@ public class Frontend {
         int currDay = calRightNow.get(Calendar.DATE);
         Date rightNow = new Date(currYear, currMonth, currDay);
 
+        //future date check
+        if(dob.compareTo(rightNow) > 0) return -1;
+
         //16 y/o check
-        if(currYear - dob.getYear() < 16) return false;
+        if(currYear - dob.getYear() < 16) return 0;
         else if(currYear - dob.getYear() == 16)
         {
-            if(currMonth < dob.getMonth()) return false;
+            if(currMonth < dob.getMonth()) return 0;
             else if (currMonth == dob.getMonth())
             {
-                if(currDay < dob.getDay()) return false;
+                if(currDay < dob.getDay()) return 0;
             }
         }
-        //make sure dob is valid calendar date
-        return (dob.isValid() && (rightNow.compareTo(dob) > 0));
 
+        //make sure dob is valid calendar date
+        if(!dob.isValid()) return -2;
+        return 1;
     }
 
     /**
@@ -375,7 +397,7 @@ public class Frontend {
         String fname = s.nextToken();
         String lname = s.nextToken();
         String dobString = s.nextToken();
-        String majorString = s.nextToken();
+        String majorString = s.nextToken().toUpperCase();
         int creditsCompleted = Integer.parseInt(s.nextToken());
         //check and make major
         Major major;

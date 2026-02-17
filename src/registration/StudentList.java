@@ -84,8 +84,9 @@ public class StudentList {
      * @return True if student found, False if not found, in list.
      */
     public boolean contains(Student student){
-        for (Student s : this.list) {
-            if (s.equals(student)) return true;
+        if(size == 0) return false;
+        for(int i = 0; i < size; i++){
+            if(list[i].equals(student)) return true;
         }
         return false;
     }
@@ -96,6 +97,10 @@ public class StudentList {
      */
     public void print(){
         //sort list then print
+        if(size == 0) {
+            System.out.println("Student list is empty.");
+            return;
+        }
         this.sort();
         for(Student s: this.list){
             System.out.print(s + " ");

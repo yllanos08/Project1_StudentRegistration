@@ -5,8 +5,6 @@ package registration;
  @author Kevin Toan, Ysabella Llanos
  */
 
-import java.util.StringTokenizer;
-
 public class Section {
     private final static int CAPACITY = 4; //sections only have max 4 students CANNOT BE INCREASED
     private Course course;

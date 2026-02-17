@@ -25,6 +25,7 @@ public class Schedule
         this.sections = new Section[CAPACITY];
     }
 
+    public int getNumSections(){return numSections;}
     /**
      * get method for sections
      * @return list of sections in this.schedule
@@ -140,6 +141,10 @@ public class Schedule
 
     public void printByClassroom()
     {
+        if(this.numSections == 0){
+            System.out.println("Schedule is empty!");
+            return;
+        }
         //selection sort
         for(int i = 0; i < this.numSections; i++)
         {
@@ -181,6 +186,10 @@ public class Schedule
     }
     public void printByCourse()
     {
+        if(numSections == 0){
+            System.out.println("Schedule is empty!");
+            return;
+        }
         //selection sort by course#, then period
         for(int i = 0; i < numSections; i++)
         {
@@ -277,6 +286,8 @@ public class Schedule
         }
         return false;
     }
+
+
 
     /**
      Check if a student meets the prereqs for a section (major and year)

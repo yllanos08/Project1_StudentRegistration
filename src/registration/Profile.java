@@ -38,7 +38,7 @@ public class Profile implements Comparable<Profile> {
         if(obj instanceof Profile)
         {
             Profile profile = (Profile) obj;
-            return (profile.fname.equals(this.fname) && profile.lname.equals(this.lname) && profile.dob.equals(this.dob));
+            return (profile.fname.equalsIgnoreCase(this.fname) && profile.lname.equalsIgnoreCase(this.lname) && profile.dob.equals(this.dob));
         }
         return false;
     }
