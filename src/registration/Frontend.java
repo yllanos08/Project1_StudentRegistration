@@ -120,7 +120,7 @@ public class Frontend {
         //instructor is valid
         if (!isValidInstructor(instructorString)) return;
         //instructor doesnt have time conflict YSA DID THIS!
-
+        if(!isInstructorTimeConflict(instructorString,periodNum)) return;
         //classroom is valid
         if (!isValidClassroom(classroomString)) return;
         //classroomm is availabile
@@ -443,9 +443,23 @@ public class Frontend {
     }
 
     /**
+     * Checks if instructor has time conflict
+     * @param instructor instructor being checked
+     * @param period period that they want to teachat
+     * @return T if available, F otherwise
+     */
+    private boolean isInstructorTimeConflict(String instructor, int period){
+        Instructor i = Instructor.valueOf(instructor);
+        Time p = getPeriod(period);
+        for(Section s: schedule.getSections()){
+            if(s.getInstructor().equals(i) && s.getTime().equals(p)) return false;
+        }
+        return true;
+    }
+    /**
      * Finds if classsroom is VALID in classroom enum
-     * @param classroom
-     * @return
+     * @param classroom classroom as string
+     * @return T if classroom is valid, F otherwise
      */
     private boolean isValidClassroom(String classroom){
         for(Classroom c: Classroom.values()){
@@ -454,6 +468,12 @@ public class Frontend {
         return false;
     }
 
+    /**
+     * Checks if classroom is availible given period
+     * @param classroom classroom as string
+     * @param period int period
+     * @return T if available, F otherwise
+     */
     private boolean isAvailableClassroom(String classroom, int period){
         Time p = getPeriod(period);
         Classroom c = Classroom.valueOf(classroom);
