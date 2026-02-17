@@ -268,24 +268,6 @@ public class Schedule
         return false;
     }
 
-    /**
-     Check if the instructor has a time conflict with the given section
-     * @param section section to be taught
-     * @param instructor instructor being checked
-     * @return true if there is a time conflict, false otherwise
-     */
-    private boolean instructorTimeConflict(Section section, Instructor instructor)
-    {
-        for(int i = 0; i < numSections; i++)
-        {
-            Section currSection = this.sections[i];
-            if(currSection.getTime().equals(section.getTime()))
-            {
-                if(currSection.getInstructor().equals(instructor)) return true;
-            }
-        }
-        return false;
-    }
 
 
 
