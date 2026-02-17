@@ -66,7 +66,15 @@ public class Frontend {
         }
         System.out.println("Registration System is Terminated.");
     }
-
+/*
+===========================================================
+                  Start of Main Functions
+===========================================================
+ */
+    /**
+     * Adds student to list of valid students
+     * @param input student first name, student last name, MM/DD/YYYY, Major, Completed Credits
+     */
     private void setADD_CMD(String input)
     {
         System.out.println("running add cmd");
@@ -75,10 +83,15 @@ public class Frontend {
         Date dob = addedStudent.getProfile().getDob();
         int creditsCompleted = addedStudent.getCreditsCompleted();
 
-
         if(isValidDOB(dob) && !studentList.contains(addedStudent) && creditsCompleted > 0) studentList.add(addedStudent);
 
     }
+
+    /**
+     * Removes student from valid list of students
+     * if student doesnt exist doesnt do anything
+     * @param input student first name, student last name, MM/DD/YYYY
+     */
     private void setREMOVE_CMD(String input)
     {
         System.out.println("running remove cmd");
@@ -86,10 +99,47 @@ public class Frontend {
         studentList.remove(removeStudent);
     }
 
-    private void setOFFER_CMD(String input)
-    {
+    /**
+     * Offer a new section of a course if possible
+     * @param input course, period, instructor, classroom
+     */
+    private void setOFFER_CMD(String input) {
         System.out.println("running offer cmd");
+        StringTokenizer s = new StringTokenizer(input);
+        String courseString = s.nextToken();
+        int periodNum = Integer.parseInt(s.nextToken());
+        String instructorString = s.nextToken();
+        String classroomString = s.nextToken();
+
+        //valid course
+        if (!isValidCourse(courseString)) return;
+        //valid period
+        if (!isValidPeriod(periodNum)) return;
+        //no time conflicts
+        if (!(isValidPeriodTime(courseString, periodNum))) return;
+        //instructor is valid
+        if (!isValidInstructor(instructorString)) return;
+        //instructor doesnt have time conflict YSA DID THIS!
+
+        //classroom is valid
+        if (!isValidClassroom(classroomString)) return;
+        //classroomm is availabile
+        if (!isAvailableClassroom(classroomString, periodNum)) return;
+
+        //now after all checks we can add the classroom into the schedule
+        Course c = Course.valueOf(courseString);
+        Instructor i = Instructor.valueOf(instructorString);
+        Time t = getPeriod(periodNum);
+        Classroom classroom = Classroom.valueOf(classroomString);
+
+        Section newSection = new Section(c,i,classroom,t);
+        schedule.add(newSection);
     }
+
+    /**
+     * Closes an existing section & remove the section identified by the course number + period
+     * @param input course code, period
+     */
     private void setCLOSE_CMD(String input)
     {
         System.out.println("running close cmd");
@@ -98,7 +148,7 @@ public class Frontend {
         int periodInt = Integer.parseInt(s.nextToken());
         //check if period is valid
         if(periodInt < 0 || periodInt > 6) return; //exit
-        if(!containsCourse(courseString)) return;
+        if(!isValidCourse(courseString)) return;
 
         Course course = Course.valueOf(courseString);
         Time period = getPeriod(periodInt);
@@ -111,6 +161,12 @@ public class Frontend {
         }
 
     }
+
+    /**
+     * Enroll student into a section of a couse if possible
+     * Checks pre-req of class before placing
+     * @param input student first name, student last name, MM/DD/YYYY, course code, section
+     */
     private void setENROLL_CMD(String input){
         System.out.println("running enroll cmd");
         Student student = findStudent(input); //this is student we want to enroll
@@ -124,7 +180,7 @@ public class Frontend {
         int periodInt = Integer.parseInt(s.nextToken());
         //check if period is valid
         if(periodInt < 0 || periodInt > 6) return; //exit
-        if(!containsCourse(courseString)) return;
+        if(!isValidCourse(courseString)) return;
 
         Course course = Course.valueOf(courseString);
         Time period = getPeriod(periodInt);
@@ -143,6 +199,10 @@ public class Frontend {
 
     }
 
+    /**
+     * Drops a course for a student
+     * @param input student firstname, student lastname, MM/DD/YYYY, course, section
+     */
     private void setDROP_CMD(String input){
         System.out.println("running drop cmd");
 
@@ -156,7 +216,7 @@ public class Frontend {
         int periodInt = Integer.parseInt(s.nextToken());
         //check if period is valid
         if(periodInt < 0 || periodInt > 6) return; //exit
-        if(!containsCourse(courseString)) return;
+        if(!isValidCourse(courseString)) return;
 
         Course course = Course.valueOf(courseString);
         Time period = getPeriod(periodInt);
@@ -174,6 +234,19 @@ public class Frontend {
 
     }
 
+    /*
+===========================================================
+                  END of Main Functions
+===========================================================
+ */
+
+
+
+    /*
+===========================================================
+                  Start of HELPER Functions
+===========================================================
+ */
     /**
      Print out information based on input (either studentList or schedule ordered by location or course)
      * @param input Specifies what information to print and how it is ordered
@@ -220,7 +293,7 @@ public class Frontend {
      * @param name major to be checked
      * @return true if major found in enum, false otherwise
      */
-    private static boolean containsMajor(String name)
+    private static boolean isValidMajor(String name)
     {
         for(Major major: Major.values())
         {
@@ -254,7 +327,7 @@ public class Frontend {
      * @param name course to be checked
      * @return true if the course is found in enum, false otherwise
      */
-    private static boolean containsCourse(String name)
+    private static boolean isValidCourse(String name)
     {
         for(Course course: Course.values())
         {
@@ -306,7 +379,7 @@ public class Frontend {
         int creditsCompleted = Integer.parseInt(s.nextToken());
         //check and make major
         Major major;
-        if(containsMajor(majorString))
+        if(isValidMajor(majorString))
         {
             major = Major.valueOf(majorString);
         }
@@ -325,6 +398,81 @@ public class Frontend {
         student.setMajor(major);
         student.setCreditsCompleted(creditsCompleted);
     }
+
+    /**
+     * Checks if a given course is valid for the period given
+     * @param courseString course we want to add
+     * @param period period for the course we want to add
+     * @return T if time slot is open, F if time slot is closed
+     */
+    private boolean isValidPeriodTime(String courseString, int period){
+        // look through all sections in our schedule
+        // if any section in our schedule matches PERIOD + COURSE then return false.
+        Course c = Course.valueOf(courseString);
+        Time p = getPeriod(period);
+        for(Section s: schedule.getSections()){
+            //if period + course matches then there is a time conflict
+            if(s.getTime().equals(p) && s.getCourse().equals(c)) return false;
+        }
+        return true;
+    }
+
+    /**
+     * Finds if period is a VALID period aka in the enum class
+     * @param period int representing period
+     * @return T if period is valid, F otherwise
+     */
+    private boolean isValidPeriod(int period){
+        Time time = getPeriod(period);
+        for(Time t: Time.values()){
+            if(t.equals(time)) return true;
+        }
+        return false;
+    }
+
+    /**
+     * Finds if instructor is VALID in instructo enum
+     * @param instructor instructor as a string
+     * @return T if instructor is valid, F otherwise
+     */
+    private boolean isValidInstructor(String instructor){
+        for(Instructor i: Instructor.values()){
+            if(i.toString().equalsIgnoreCase(instructor)) return true;
+        }
+        return false;
+    }
+
+    /**
+     * Finds if classsroom is VALID in classroom enum
+     * @param classroom
+     * @return
+     */
+    private boolean isValidClassroom(String classroom){
+        for(Classroom c: Classroom.values()){
+            if(c.toString().equalsIgnoreCase(classroom)) return true;
+        }
+        return false;
+    }
+
+    private boolean isAvailableClassroom(String classroom, int period){
+        Time p = getPeriod(period);
+        Classroom c = Classroom.valueOf(classroom);
+        //look through schedule
+        //look through all the sections
+        //if another section uses the classroom at same period then return false
+
+        for(Section s: schedule.getSections()){
+            if(s.getClassroom().equals(c) && s.getTime().equals(p)) return false;
+        }
+        return true;
+    }
+
+
+    /*
+===========================================================
+                  END of Helper Functions
+===========================================================
+ */
 
 
 
