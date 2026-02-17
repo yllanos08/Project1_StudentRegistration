@@ -20,6 +20,7 @@ public class StudentList {
         this.list = new Student[CAPACITY];
     }
 
+    public int getSize(){return size;}
     public Student[] getList() {
         return list;
     }
@@ -39,8 +40,7 @@ public class StudentList {
      * increases array size by 4 [CAPACITY]
      */
     private void grow() {
-        this.size += CAPACITY;
-        Student[] newList = new Student[this.size];
+        Student[] newList = new Student[this.list.length + CAPACITY];
         for(int i = 0; i < list.length; i++){
             newList[i] = list[i];
         }
@@ -64,8 +64,6 @@ public class StudentList {
      * @param student student obj
      */
     public void remove(Student student){
-        //if student not found cant remove them !
-        if(!this.contains(student)) return;
 
         // {2 ,3 4} -> size = 3 last is 2
         Student lastStudent = this.list[size-1];
@@ -74,8 +72,10 @@ public class StudentList {
         int indexOfReplacee = this.find(student);
 
         //make last student nothing
-        this.list[size-1] = null;
+        this.list[size--] = null;
         this.list[indexOfReplacee] = lastStudent;
+        System.out.println("[" + student.getProfile().getFname() + " " + student.getProfile().getLname() + " " + student.getProfile().getDob() + "]"
+                + " removed from the list");
     }
 
     /**
@@ -102,17 +102,18 @@ public class StudentList {
             return;
         }
         this.sort();
-        for(Student s: this.list){
-            System.out.print(s + " ");
+        System.out.println("* Student list ordered by last, first name, DOB *");
+        for(int i = 0; i < this.size; i++){
+            System.out.println(list[i]);
         }
-
+        System.out.println("* end of list **");
     }
 
     private void sort(){
         for(int i = 0; i < this.size; i++){
             Student smallestStu = this.list[i];
-            int index = 0;
-            for(int j = 0; j < this.size; j++){
+            int index = i;
+            for(int j = i+ 1; j < this.size; j++){
                 if(smallestStu.compareTo(this.list[j]) > 0)
                 {
                     smallestStu = this.list[j];

@@ -84,7 +84,12 @@ public class Frontend {
     {
         System.out.println("running add cmd");
         Student addedStudent = new Student();
-        makeStudent(input, addedStudent);
+        String majorString = makeStudent(input, addedStudent);
+        if(!isValidMajor(majorString)){
+            System.out.println("INVALID: " + majorString + " major does not exixt!");
+            return;
+        }
+
         Date dob = addedStudent.getProfile().getDob();
 
         int creditsCompleted = addedStudent.getCreditsCompleted();
@@ -95,7 +100,8 @@ public class Frontend {
         if(studentList.contains(addedStudent)) System.out.println("[" + addedStudent.getProfile().getFname() + " " + addedStudent.getProfile().getLname() + " "
                 + dob + "]" +
                 " " + "student is already in the list");
-        if(validateDOB(dob) == 1 && !studentList.contains(addedStudent) && creditsCompleted > 0){
+        if(creditsCompleted < 0) System.out.println(creditsCompleted  + " " + "credit is negative!");
+        if(validateDOB(dob) == 1 && creditsCompleted > 0 && !studentList.contains(addedStudent)){
             studentList.add(addedStudent);
             System.out.println("[" + addedStudent.getProfile().getFname() + " " + addedStudent.getProfile().getLname() + " "
                     + dob + "]" +
@@ -113,6 +119,14 @@ public class Frontend {
     {
         System.out.println("running remove cmd");
         Student removeStudent = findStudent(input);
+        StringTokenizer t = new StringTokenizer(input);
+        String fname = t.nextToken();
+        String lname = t.nextToken();
+        String dob = t.nextToken();
+        if (removeStudent == null || !studentList.contains(removeStudent)) {
+            System.out.println("[" + fname + " " + lname + " "  + dob + "]" + " is not in the student list!");
+            return;
+        }
         studentList.remove(removeStudent);
     }
 
@@ -129,28 +143,54 @@ public class Frontend {
         String classroomString = s.nextToken();
 
         //valid course
-        if (!isValidCourse(courseString)) return;
+        if (!isValidCourse(courseString)) {
+            System.out.println("INVALID: " + "course name " + courseString + " does not exist");
+            return;
+        }
         //valid period
-        if (!isValidPeriod(periodNum)) return;
+        if (!isValidPeriod(periodNum)){
+            System.out.println("INVALID: " + "period " + periodNum + " does not exist");
+            return;
+        }
         //no time conflicts
-        if (!(isValidPeriodTime(courseString, periodNum))) return;
+        if (!(isValidPeriodTime(courseString, periodNum))){
+            System.out.println("INVALID: " + courseString.toUpperCase() + " period " + periodNum + " already exists");
+            return;
+        }
         //instructor is valid
-        if (!isValidInstructor(instructorString)) return;
+        if (!isValidInstructor(instructorString)){
+            System.out.println("INVALID: " + "instructor " + instructorString + " does not exist");
+            return;
+        }
         //instructor doesnt have time conflict YSA DID THIS!
-        if(!isInstructorTimeConflict(instructorString,periodNum)) return;
+        if(!isInstructorTimeConflict(instructorString,periodNum)){
+            System.out.println("INVALID: " + instructorString.toUpperCase() + " time conflict.");
+            return;
+        }
         //classroom is valid
-        if (!isValidClassroom(classroomString)) return;
+        if (!isValidClassroom(classroomString)) {
+            System.out.println("INVALID: " + "classroom " + classroomString + " does not exist");
+            return;
+        }
         //classroomm is availabile
-        if (!isAvailableClassroom(classroomString, periodNum)) return;
+        if (!isAvailableClassroom(classroomString, periodNum)) {
+            System.out.println("INVALID: " + "classroom is not available");
+            return;
+        }
 
         //now after all checks we can add the classroom into the schedule
-        Course c = Course.valueOf(courseString);
-        Instructor i = Instructor.valueOf(instructorString);
+        Course c = Course.valueOf(courseString.toUpperCase());
+        String formattedName = instructorString.substring(0, 1).toUpperCase()
+                + instructorString.substring(1).toLowerCase();
+        Instructor i = Instructor.valueOf(formattedName);
         Time t = getPeriod(periodNum);
-        Classroom classroom = Classroom.valueOf(classroomString);
+        Classroom classroom = Classroom.valueOf(classroomString.toUpperCase());
 
         Section newSection = new Section(c,i,classroom,t);
         schedule.add(newSection);
+        System.out.println("[" + c + " " + t.getStart() + "] "
+        + "[" + i + "]" + " "
+        + "[" + classroom + ", " + classroom.getBuilding() + ", " + classroom.getCampus() + "]" + " added to the schedule." );
     }
 
     /**
@@ -167,7 +207,7 @@ public class Frontend {
         if(periodInt < 0 || periodInt > 6) return; //exit
         if(!isValidCourse(courseString)) return;
 
-        Course course = Course.valueOf(courseString);
+        Course course = Course.valueOf(courseString.toUpperCase());
         Time period = getPeriod(periodInt);
 
         //if we made it here then those two are valid, find course to be removed
@@ -199,7 +239,7 @@ public class Frontend {
         if(periodInt < 0 || periodInt > 6) return; //exit
         if(!isValidCourse(courseString)) return;
 
-        Course course = Course.valueOf(courseString);
+        Course course = Course.valueOf(courseString.toUpperCase());
         Time period = getPeriod(periodInt);
 
         Section section = null;
@@ -235,7 +275,7 @@ public class Frontend {
         if(periodInt < 0 || periodInt > 6) return; //exit
         if(!isValidCourse(courseString)) return;
 
-        Course course = Course.valueOf(courseString);
+        Course course = Course.valueOf(courseString.toUpperCase());
         Time period = getPeriod(periodInt);
 
         Section section = null;
@@ -379,11 +419,10 @@ public class Frontend {
         Date dob = new Date(year, month, day);
 
         Profile profile = new Profile (fname, lname, dob);
-        for(Student s : studentList.getList())
-        {
-            if(s.getProfile().equals(profile)) student = s;
+        for(int i = 0; i < studentList.getSize(); i++){
+            Profile check = studentList.getList()[i].getProfile();
+            if(check.equals(profile)) student = studentList.getList()[i];
         }
-
         return student;
     }
     /**
@@ -391,7 +430,7 @@ public class Frontend {
      * @param input input provided
      * @param student student to be made/finished
      */
-    private static void makeStudent(String input, Student student)
+    private static String makeStudent(String input, Student student)
     {
         StringTokenizer s =  new StringTokenizer(input);
         String fname = s.nextToken();
@@ -405,7 +444,7 @@ public class Frontend {
         {
             major = Major.valueOf(majorString);
         }
-        else return;
+        else return majorString;
 
         StringTokenizer dobToken = new StringTokenizer(dobString);
         int month = Integer.parseInt(dobToken.nextToken("/"));
@@ -419,6 +458,7 @@ public class Frontend {
         student.setProfile(addedProfile);
         student.setMajor(major);
         student.setCreditsCompleted(creditsCompleted);
+        return majorString;
     }
 
     /**
@@ -430,11 +470,11 @@ public class Frontend {
     private boolean isValidPeriodTime(String courseString, int period){
         // look through all sections in our schedule
         // if any section in our schedule matches PERIOD + COURSE then return false.
-        Course c = Course.valueOf(courseString);
+        Course c = Course.valueOf(courseString.toUpperCase());
         Time p = getPeriod(period);
-        for(Section s: schedule.getSections()){
-            //if period + course matches then there is a time conflict
-            if(s.getTime().equals(p) && s.getCourse().equals(c)) return false;
+        for(int i = 0; i < schedule.getNumSections(); i++){
+            Section section = schedule.getSections()[i];
+            if(section.getTime().equals(p) && section.getCourse().equals(c)) return false;
         }
         return true;
     }
@@ -471,10 +511,13 @@ public class Frontend {
      * @return T if available, F otherwise
      */
     private boolean isInstructorTimeConflict(String instructor, int period){
-        Instructor i = Instructor.valueOf(instructor);
+        String formattedName = instructor.substring(0, 1).toUpperCase()
+                + instructor.substring(1).toLowerCase();
+        Instructor i = Instructor.valueOf(formattedName);
         Time p = getPeriod(period);
-        for(Section s: schedule.getSections()){
-            if(s.getInstructor().equals(i) && s.getTime().equals(p)) return false;
+        for(int j = 0; j < schedule.getNumSections(); j++){
+            Section section = schedule.getSections()[j];
+            if(section.getInstructor().equals(i) && section.getTime().equals(p)) return false;
         }
         return true;
     }
@@ -498,13 +541,14 @@ public class Frontend {
      */
     private boolean isAvailableClassroom(String classroom, int period){
         Time p = getPeriod(period);
-        Classroom c = Classroom.valueOf(classroom);
+        Classroom c = Classroom.valueOf(classroom.toUpperCase());
         //look through schedule
         //look through all the sections
         //if another section uses the classroom at same period then return false
 
-        for(Section s: schedule.getSections()){
-            if(s.getClassroom().equals(c) && s.getTime().equals(p)) return false;
+        for(int i = 0; i < schedule.getNumSections(); i++){
+            Section section = schedule.getSections()[i];
+            if(section.getClassroom().equals(c) && section.getTime().equals(p)) return false;
         }
         return true;
     }
