@@ -59,8 +59,7 @@ public class Schedule
      */
     private void grow()
     {
-        this.numSections += CAPACITY;
-        Section [] newList = new Section [numSections];
+        Section [] newList = new Section [this.sections.length + CAPACITY];
         for(int i = 0; i < this.sections.length; i++)
         {
             newList[i] = this.sections[i];
@@ -88,12 +87,12 @@ public class Schedule
     public void remove(Section section)
     {
         if(!this.contains(section)) return;
-        Section lastSection = this.sections[numSections -1]; //get last section
+        Section lastSection = this.sections[numSections - 1]; //get last section
 
         //replace last with what we want to remove
 
         int index = this.find(section);
-        this.sections[numSections - 1] = null;
+        this.sections[numSections--] = null;
         this.sections[index] = lastSection;
     }
 
@@ -186,6 +185,7 @@ public class Schedule
     }
     public void printByCourse()
     {
+        System.out.println("print by code:  ");
         if(numSections == 0){
             System.out.println("Schedule is empty!");
             return;
@@ -194,35 +194,27 @@ public class Schedule
         for(int i = 0; i < numSections; i++)
         {
             int swapIndex = i;
-            Section smallestSection = this.sections[i];
-            for(int j = i + 1; j < this.numSections; j++)
-            {
-                //compare by coursenumber first
+           // Section smallestSection = this.sections[i];
+            for(int j = i + 1; j < this.numSections; j++) {
+                int courseCompare = sections[j].getCourse().name().compareTo(sections[swapIndex].getCourse().name());;
 
-                //if equal go by building
-                //collegeave.compareTo(busch) will return 1
-                int courseCompare = smallestSection.getCourse().compareTo(this.sections[j].getCourse());
-                if(courseCompare > 0)
-                {
-                    swapIndex = j;
-                    smallestSection = this.sections[j];
-                }
-                if(courseCompare == 0)
-                {
-                    //check building
-                    if(smallestSection.getTime().compareTo(this.sections[j].getTime()) > 0)
-                    {
-                        swapIndex = j;
-                        smallestSection = this.sections[j];
-
-                    }
+                if (courseCompare < 0) swapIndex = j;
+                else if (courseCompare == 0) {
+                    if (sections[swapIndex].getTime().compareTo(sections[j].getTime()) < 0) swapIndex = j;
                 }
             }
-            Section temp = this.sections[i];
-            this.sections[i] = this.sections[swapIndex];
-            this.sections[swapIndex] = temp;
+            Section temp = sections[i];
+            sections[i] = sections[swapIndex];
+            sections[swapIndex] = temp;
         }
+        for(int i = 0; i < numSections; i++){
+            Section currSection = sections[i];
 
+            System.out.println("[" + currSection.getCourse() + " " + currSection.getTime().getStart() + "]"
+                    + " "  + "[" + currSection.getInstructor() + "]" +
+                    " " + "[" + currSection.getClassroom() + ", " + currSection.getClassroom().getBuilding() + ", " + currSection.getClassroom().getCampus() + "]");
+            currSection.print();
+        }
     }
 
 

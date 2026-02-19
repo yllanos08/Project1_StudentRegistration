@@ -102,9 +102,15 @@ public class Section {
      * prints out roster of the section
      */
     public void print() {
-        for(Student s: roster){
-            System.out.println(s.toString());
+        if(numStudents == 0) System.out.println("** No students Enrolled **");
+        else{
+            System.out.println("** Roster **");
+            for(int i = 0; i < numStudents; i++){
+                Student currStudent = roster[i];
+                System.out.println("    [" +  currStudent.getProfile().getFname() + " " + currStudent.getProfile().getLname() + " " + currStudent.getProfile().getDob() + "]");
+            }
         }
+
     }
 
 

@@ -15,7 +15,9 @@ public class Frontend {
     final String CLOSE_CMD = "C";
     final String ENROLL_CMD = "E";
     final String DROP_CMD = "D";
-    final String PRINT_CMD = "P";
+    final String PRINTSTUDENTS_CMD = "PS";
+    final String PRINTSECTIONSBYLOCATION_CMD = "PL";
+    final String PRINTSECTIONSBYCODE_CMD = "PC";
     final String STOP_CMD = "Q";
 
 
@@ -34,37 +36,24 @@ public class Frontend {
         String onRunMsg = "Registration System is Running";
         System.out.println(onRunMsg);
         Scanner sc = new Scanner(System.in);
-        String input;
-        String[] inputParts;
-        String inputCmd;
-        String inputParam;
+        boolean active = true;
         //loop forever unless stopped
-        while (true) {
+        while (active) {
             if (sc.hasNextLine()) {
-                input = sc.nextLine();
-                inputParts = input.split("\\s", 2);
-                inputCmd = inputParts[0];
-                inputParam = (inputParts.length > 1) ? inputParts[1] : "";
-                if (inputCmd.equals(ADD_CMD)) {
-                    setADD_CMD(inputParam);
-                } else if (inputCmd.equals(REMOVE_CMD)) {
-                    setREMOVE_CMD(inputParam);
-                } else if (inputCmd.equals(OFFER_CMD)) {
-                    setOFFER_CMD(inputParam);
-                } else if (inputCmd.equals(CLOSE_CMD)) {
-                    setCLOSE_CMD(inputParam);
-                } else if (inputCmd.equals(ENROLL_CMD)) {
-                    setENROLL_CMD(inputParam);
-                } else if (inputCmd.equals(DROP_CMD)) {
-                    setDROP_CMD(inputCmd);
-                } else if(inputCmd.equals("PC") || inputCmd.equals("PS") || inputCmd.equals("PL")){
-                    setPRINT_CMD(inputCmd);
-                }else if (inputCmd.equals(STOP_CMD)) {
-                    break;
-                }
-                //ERROR
-                else{
-                    System.out.println(inputCmd + " is an invalid command!");
+                String input = sc.nextLine();
+                String[] inputParts = input.split("\\s", 2);
+                String inputCmd = inputParts[0];
+                String inputParam = (inputParts.length > 1) ? inputParts[1] : "";
+                switch(inputCmd){
+                    case ADD_CMD -> setADD_CMD(inputParam);
+                    case REMOVE_CMD -> setREMOVE_CMD(inputParam);
+                    case OFFER_CMD -> setOFFER_CMD(inputParam);
+                    case CLOSE_CMD -> setCLOSE_CMD(inputParam);
+                    case ENROLL_CMD -> setENROLL_CMD(inputParam);
+                    case DROP_CMD -> setDROP_CMD(inputParam);
+                    case PRINTSTUDENTS_CMD, PRINTSECTIONSBYLOCATION_CMD, PRINTSECTIONSBYCODE_CMD -> setPRINT_CMD(inputCmd);
+                    case STOP_CMD -> active = false;
+                    default -> System.out.println(inputCmd + " is an invalid command!");
                 }
             }
         }
@@ -82,7 +71,6 @@ public class Frontend {
      */
     private void setADD_CMD(String input)
     {
-        System.out.println("running add cmd");
         Student addedStudent = new Student();
         String majorString = makeStudent(input, addedStudent);
         if(!isValidMajor(majorString)){
@@ -174,7 +162,8 @@ public class Frontend {
         }
         //classroomm is availabile
         if (!isAvailableClassroom(classroomString, periodNum)) {
-            System.out.println("INVALID: " + "classroom is not available");
+            Classroom classroom = Classroom.valueOf((classroomString.toUpperCase()));
+            System.out.println("INVALID: " + "[" + classroom + ", " + classroom.getBuilding() + ", " + classroom.getCampus() + "]" + " is not available!");
             return;
         }
 
@@ -199,24 +188,34 @@ public class Frontend {
      */
     private void setCLOSE_CMD(String input)
     {
-        System.out.println("running close cmd");
         StringTokenizer s =  new StringTokenizer(input);
         String courseString = s.nextToken();
         int periodInt = Integer.parseInt(s.nextToken());
         //check if period is valid
-        if(periodInt < 0 || periodInt > 6) return; //exit
-        if(!isValidCourse(courseString)) return;
+        if(periodInt < 0 || periodInt > 6) {
+            System.out.println("INVALID: " + "period " + periodInt + " does not exist!");
+            return; //exit
+        }
+        if(!isValidCourse(courseString)){
+            System.out.println("INVALID: " + "course name " + courseString + " does not exist!");
+            return;
+        }
 
         Course course = Course.valueOf(courseString.toUpperCase());
         Time period = getPeriod(periodInt);
-
+        Section[] sections = schedule.getSections();
         //if we made it here then those two are valid, find course to be removed
 
-        for(Section section: schedule.getSections()) //loop through sections
+        for(int i = 0; i < schedule.getNumSections(); i++ ) //loop through sections
         {
-            if(section.getCourse().equals(course) && section.getTime().equals(period) && section.getNumStudents() != 0) schedule.remove(section);
+            if(sections[i].getCourse().equals(course) && sections[i].getTime().equals(period) && sections[i].getNumStudents() != 0){
+                schedule.remove(sections[i]);
+                System.out.println("");
+                return;
+            }
         }
-
+        //if we loop through all the sections without removing then it doesnt exist
+        System.out.println(course + " " +  period.getStart() +  " does not exist");
     }
 
     /**
@@ -241,19 +240,20 @@ public class Frontend {
 
         Course course = Course.valueOf(courseString.toUpperCase());
         Time period = getPeriod(periodInt);
-
+        Section[] sections = schedule.getSections();
         Section section = null;
-        for(Section sec: schedule.getSections()) //loop through sections
+        //getting section if it exists
+        for(int i = 0; i < sections.length; i++) //loop through sections
         {
-            if(sec.getCourse().equals(course) && sec.getTime().equals(period)) section = sec;
+            if(sections[i].getCourse().equals(course) && sections[i].getTime().equals(period)){
+                section = sections[i];
+            }
         }
 
         if(studentList.contains(student) && section != null) // student list has student and section exists, enroll
         {
             schedule.enroll(section, student);
         }
-
-
     }
 
     /**
@@ -310,10 +310,11 @@ public class Frontend {
      */
     private void setPRINT_CMD(String input)
     {
-        System.out.println("running print: " + input);
-        if(input.equals("PS")) studentList.print();
-        if(input.equals("PL")) schedule.printByClassroom();
-        if(input.equals("PC")) schedule.printByCourse();
+        switch(input){
+            case PRINTSTUDENTS_CMD -> studentList.print();
+            case PRINTSECTIONSBYLOCATION_CMD -> schedule.printByClassroom();
+            case PRINTSECTIONSBYCODE_CMD -> schedule.printByCourse();
+        }
     }
 
 
@@ -553,6 +554,10 @@ public class Frontend {
         return true;
     }
 
+    private boolean isValidStudent(String student){
+        Student currStudent;
+        return true;
+    }
 
     /*
 ===========================================================

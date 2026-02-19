@@ -40,7 +40,7 @@ public class Student implements Comparable<Student> {
      * finds school year of student < 30 = fresh, < 60 = soph, <90 = junior, 90+ = senior
      * @return school year of student in a String
      */
-    public String schoolYear(){
+    public String getSchoolYear(){
         if(creditsCompleted > JUNIOR) return "Senior";
         else if(creditsCompleted > SOPHOMORE) return "Junior";
         else if(creditsCompleted > FRESHMAN) return "Sophomore";
@@ -72,7 +72,7 @@ public class Student implements Comparable<Student> {
     public String toString(){
         return "[" + profile.getFname() + " " + profile.getLname() + "]" + " "
                 + "[" + major + "," + major.getSchool() + "]" + " "
-                + "credits earned: " + creditsCompleted + "[" + schoolYear() + "]";
+                + "credits earned: " + creditsCompleted + "[" + getSchoolYear() + "]";
     }
 
     /**
