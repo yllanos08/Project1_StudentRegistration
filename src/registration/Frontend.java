@@ -108,8 +108,8 @@ public class Frontend {
         try{
             Student removeStudent = findStudent(input);
             studentList.remove(removeStudent);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+        } catch (Exception exception) {
+            System.out.println(exception.getMessage());
         }
     }
 
@@ -118,7 +118,6 @@ public class Frontend {
      * @param input course, period, instructor, classroom
      */
     private void setOFFER_CMD(String input) {
-        System.out.println("running offer cmd");
         StringTokenizer s = new StringTokenizer(input);
         String courseString = s.nextToken();
         int periodNum = Integer.parseInt(s.nextToken());
@@ -181,45 +180,34 @@ public class Frontend {
      * Closes an existing section & remove the section identified by the course number + period
      * @param input course code, period
      */
-    private void setCLOSE_CMD(String input)
-    {
-        StringTokenizer s =  new StringTokenizer(input);
+    private void setCLOSE_CMD(String input) {
+        try {
+        StringTokenizer s = new StringTokenizer(input);
         String courseString = s.nextToken();
         int periodInt = Integer.parseInt(s.nextToken());
         //check if period is valid
-        if(periodInt < 0 || periodInt > 6) {
-            System.out.println("INVALID: " + "period " + periodInt + " does not exist!");
-            return; //exit
+        if (!isValidPeriod(periodInt)){
+            throw new Exception("INVALID: " + "period " + periodInt + " does not exist!");
         }
-        if(!isValidCourse(courseString)){
-            System.out.println("INVALID: " + "course name " + courseString + " does not exist!");
-            return;
+        if (!isValidCourse(courseString)) {
+            throw new Exception("INVALID: course name " + courseString + " does not exist.");
         }
 
-        Course course = Course.valueOf(courseString.toUpperCase());
+        Section section = findSection(courseString, periodInt, schedule);
+        schedule.remove(section);
         Time period = getPeriod(periodInt);
-        Section[] sections = schedule.getSections();
-        //if we made it here then those two are valid, find course to be removed
-
-        for(int i = 0; i < schedule.getNumSections(); i++ ) //loop through sections
-        {
-            if(sections[i].getCourse().equals(course) && sections[i].getTime().equals(period) && sections[i].getNumStudents() != 0){
-                schedule.remove(sections[i]);
-                System.out.println("");
-                return;
-            }
+        System.out.println(courseString.toUpperCase() + " " + period.getStart() + " removed.");
+    } catch (Exception exception) {
+            System.out.println(exception.getMessage());
         }
-        //if we loop through all the sections without removing then it doesnt exist
-        System.out.println(course + " " +  period.getStart() +  " does not exist");
     }
 
     /**
      * Enroll student into a section of a couse if possible
      * Checks pre-req of class before placing
-     * @param input student first name, student last name, MM/DD/YYYY, course code, section
+     * @param input student first name, student last name, MM/DD/YYYY, course code, section/period
      */
     private void setENROLL_CMD(String input){
-        System.out.println("running enroll cmd");
         try{
             Student student = findStudent(input); //this is student we want to drop from sec
             StringTokenizer s =  new StringTokenizer(input);
@@ -234,26 +222,14 @@ public class Frontend {
             if(!isValidCourse(courseString)){
                 throw new Exception("INVALID: course " + courseString + " does not exist.");
             }
-
-            Course course = Course.valueOf(courseString.toUpperCase());
-            Time period = getPeriod(periodInt);
-            Section[] sections = schedule.getSections();
-            Section section = null;
-            //getting section if it exists
-            for(int i = 0; i < schedule.getNumSections(); i++) //loop through sections
-            {
-                if(sections[i].getCourse().equals(course) && sections[i].getTime().equals(period)){
-                    section = sections[i];
-                }
-            }
-
-            if(studentList.contains(student) && section != null) // student list has student and section exists, enroll
-            {
-                //ISSUUE IS IN THE ENROLL SECTION PART!!!!something about
-                schedule.enroll(section, student);
-            }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+            // this will throw an exception if the section isnt found
+            Section section = findSection(courseString, periodInt, schedule);
+            //enroll will throw an exception if it doesnt work
+            schedule.enroll(section, student);
+            System.out.println("[" + student.getProfile().getFname() + " " + student.getProfile().getLname() + " " + student.getProfile().getDob() + "]" +
+                    " added to " + section.getCourse() + " " + section.getPeriod().getStart() + ".");
+        } catch (Exception exception) {
+            System.out.println(exception.getMessage());
         }
     }
 
@@ -262,7 +238,6 @@ public class Frontend {
      * @param input student firstname, student lastname, MM/DD/YYYY, course, section
      */
     private void setDROP_CMD(String input){
-        System.out.println("running drop cmd");
         //find student returns an exception
         try{
             Student student = findStudent(input); //this is student we want to drop from sec
@@ -278,21 +253,15 @@ public class Frontend {
             if(!isValidCourse(courseString)){
                 throw new Exception("INVALID: course " + courseString + " does not exist.");
             }
-            Course course = Course.valueOf(courseString.toUpperCase());
-            Time period = getPeriod(periodInt);
-            Section[] sections = schedule.getSections();
-            Section section = null;
-            for(int i = 0 ; i < schedule.getNumSections(); i++) //loop through sections
-            {
-                if(sections[i].getCourse().equals(course) && sections[i].getTime().equals(period)) section = sections[i];
-            }
 
-            if(studentList.contains(student) && section != null) // student list has student and section exists, enroll
-            {
-                schedule.drop(section, student);
-            }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+            Section section = findSection(courseString, periodInt, schedule);
+            //enroll will throw an exception if it doesnt work
+            schedule.drop(section, student);
+            System.out.println("[" + student.getProfile().getFname() + " " + student.getProfile().getLname() + " " + student.getProfile().getDob() + "]" +
+                    " dropped from " + section.getCourse() + " " + section.getPeriod().getStart() + ".");
+
+        } catch (Exception exception) {
+            System.out.println(exception.getMessage());
         }
     }
 
@@ -432,7 +401,7 @@ public class Frontend {
                 return student;
             }
         }
-        throw new Exception("[" + fname + " " + lname + " " + dobString +  "]" + " does not exist.");
+        throw new Exception("INVALID: [" + fname + " " + lname + " " + dobString +  "]" + " does not exist.");
     }
     /**
      Fill student attributes using input
@@ -483,7 +452,7 @@ public class Frontend {
         Time p = getPeriod(period);
         for(int i = 0; i < schedule.getNumSections(); i++){
             Section section = schedule.getSections()[i];
-            if(section.getTime().equals(p) && section.getCourse().equals(c)) return false;
+            if(section.getPeriod().equals(p) && section.getCourse().equals(c)) return false;
         }
         return true;
     }
@@ -526,7 +495,7 @@ public class Frontend {
         Time p = getPeriod(period);
         for(int j = 0; j < schedule.getNumSections(); j++){
             Section section = schedule.getSections()[j];
-            if(section.getInstructor().equals(i) && section.getTime().equals(p)) return false;
+            if(section.getInstructor().equals(i) && section.getPeriod().equals(p)) return false;
         }
         return true;
     }
@@ -557,7 +526,7 @@ public class Frontend {
 
         for(int i = 0; i < schedule.getNumSections(); i++){
             Section section = schedule.getSections()[i];
-            if(section.getClassroom().equals(c) && section.getTime().equals(p)) return false;
+            if(section.getClassroom().equals(c) && section.getPeriod().equals(p)) return false;
         }
         return true;
     }
@@ -574,6 +543,30 @@ public class Frontend {
         return true;
     }
 
+    /**
+     * Finds section if it exists
+     * @param courseString course code as a string
+     * @param periodInt period as an int
+     * @param schedule schedule
+     * @return section if found
+     * @throws Exception if section is not in schedule
+     */
+    private Section findSection(String courseString, int periodInt, Schedule schedule) throws Exception{
+        Course course = Course.valueOf(courseString.toUpperCase());
+        Time period = getPeriod(periodInt);
+        Section[] sections = schedule.getSections();
+        Section section;
+        //getting section if it exists
+        for(int i = 0; i < schedule.getNumSections(); i++) //loop through sections
+        {
+            if(sections[i].getCourse().equals(course) && sections[i].getPeriod().equals(period)){
+                section = sections[i];
+                return section;
+            }
+        }
+
+        throw new Exception("INVALID: " + course.name() + " " + period.getStart() + " does not exist.");
+    }
     /*
 ===========================================================
                   END of Helper Functions

@@ -34,7 +34,7 @@ public class Section {
     public Course getCourse(){return this.course;}
     public Instructor getInstructor(){return this.instructor;}
     public Classroom getClassroom(){return this.classroom;}
-    public Time getTime() {return this.time;}
+    public Time getPeriod() {return this.time;}
     public Student[] getRoster() {return this.roster;}
 
     public int getNumStudents(){return this.numStudents;}
@@ -46,9 +46,12 @@ public class Section {
      * enroll student into class if class isn't full (doesn't check requirements)
      * @param student - student TBE (to be enrolled)
      */
-    public void enroll(Student student) {
-        if(isFull()) return;
-        if(contains(student)) return;
+
+    public void enroll(Student student) throws Exception {
+
+        if(isFull()) throw new Exception("Cannot enroll " + "[" + student.getProfile().getFname() + " " + student.getProfile().getLname() + " "
+        + student.getProfile().getDob() + "]," + " " + this.getCourse() + " " + this.getPeriod().getStart() + " is full.");
+        if(contains(student)) throw new Exception("Student already in section");
         roster[numStudents++] = student;
     }
 
@@ -56,15 +59,19 @@ public class Section {
      * drops student if they exist
      * @param student - student TBR (to be removed)
      */
-    public void drop(Student student) {
-        if(!contains(student)) return;
+    public void drop(Student student) throws Exception {
+        if(!contains(student)){
+            throw new Exception ("[" + student.getProfile().getFname() + " " + student.getProfile().getLname() + " " + student.getProfile().getDob()
+                                + "] " + "is not enrolled in this section.");
+        }
         int indexOfStudent = find(student);
         //remove and replace
         Student lastStudent = roster[numStudents - 1];
         roster[indexOfStudent] = lastStudent;
-        roster[numStudents] = null;
+        roster[numStudents - 1] = null;
         numStudents--;
     }
+
 
     /**
      * Check if student is in roster

@@ -41,9 +41,9 @@ public class Student implements Comparable<Student> {
      * @return school year of student in a String
      */
     public String getSchoolYear(){
-        if(creditsCompleted > JUNIOR) return "Senior";
-        else if(creditsCompleted > SOPHOMORE) return "Junior";
-        else if(creditsCompleted > FRESHMAN) return "Sophomore";
+        if(creditsCompleted >= JUNIOR) return "Senior";
+        else if(creditsCompleted >= SOPHOMORE) return "Junior";
+        else if(creditsCompleted >= FRESHMAN) return "Sophomore";
         else return "Freshman";
     }
     /**
@@ -70,7 +70,7 @@ public class Student implements Comparable<Student> {
 
     @Override
     public String toString(){
-        return "[" + profile.getFname() + " " + profile.getLname() + "]" + " "
+        return "[" + profile.getFname() + " " + profile.getLname() + " " + profile.getDob() + "]" + " "
                 + "[" + major + "," + major.getSchool() + "]" + " "
                 + "credits earned: " + creditsCompleted + "[" + getSchoolYear() + "]";
     }

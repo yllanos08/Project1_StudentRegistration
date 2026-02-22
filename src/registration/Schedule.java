@@ -81,12 +81,17 @@ public class Schedule
     }
 
     /**
-     Remove section from list of sections
-     * @param section section to be removed
+     Tries to remove section from schedule (closing cmd)
+     checks if section is empty first
+     * @param section section to be closed
+     * @throws Exception if section is empty
      */
-    public void remove(Section section)
+    public void remove(Section section) throws Exception
     {
-        if(!this.contains(section)) return;
+        if (section.getNumStudents() > 0) {
+            throw new Exception(section.getCourse() + " " + section.getPeriod().getStart() + " cannot be removed "
+                    + "[" + section.getNumStudents() + " student(s) enrolled" + "]");
+        }
         Section lastSection = this.sections[numSections - 1]; //get last section
 
         //replace last with what we want to remove
@@ -101,32 +106,45 @@ public class Schedule
      * @param section section that student will be enrolled in
      * @param student student to be enrolled
      */
-    public void enroll(Section section, Student student) {
-        //checks to do: credit count, method done
-        //time conflict, method done
-        //not alr enrolled in class just diff section
-        //pre reqs are met (major and year)
+    public void enroll(Section section, Student student) throws Exception {
+        try{
+            if(checkCreditCount(student) + section.getCourse().getCreditHours() > 18) {
+                throw new Exception("Cannot enroll [" + student.getProfile().getFname() + " " + student.getProfile().getLname() + " " + student.getProfile().getDob() +
+                        "]; " + "now has " + checkCreditCount(student) + " will exceed credit limit of 18"); //if max credits exceeded
+            }
+            if(duplicateCourse(section, student)){
+                throw new Exception("[" + student.getProfile().getFname() + " " + student.getProfile().getLname() + " " + student.getProfile().getDob() +  "]"
+                        + " already enrolled in " + section.getCourse());
+            }
+            if(checkStudentTimeConflict(section, student)) {
+                String period = section.getPeriod().name();
+                String periodInt = period.substring(6);
+                throw new Exception("Time conflict: " + "[" + student.getProfile().getFname() + " " + student.getProfile().getLname() + " " + student.getProfile().getDob() +  "]"
+                        + "enrolled in another class at period " + periodInt);
+            }
 
-        //do nothing if max credits will be exceeded, prereqs not met, time conflict, and alr enrolled
-        if(checkCreditCount(student) + section.getCourse().getCreditHours() > 18) return; //if max credits exceeded
-        if(duplicateCourse(section, student)) return;
-        if(checkStudentTimeConflict(section, student)) return;
-        if(metPrereq(section, student))
-        {
+            //metPrereq will throw its own exception
+            metPrereq(section, student);
             section.enroll(student);
+        } catch (Exception exception) {
+            throw new Exception(exception.getMessage());
         }
-        System.out.println("[" + student.getProfile().getFname() + " " + student.getProfile().getLname() + "]" +
-                " added to " + section.getCourse() + " " + section.getTime().getStart() + ".");
     }
     /**
      Drop a student from a section
      * @param section section that student will be removed from
      * @param student student to be removed
      */
-    public void drop(Section section, Student student)
+    public void drop(Section section, Student student) throws Exception
     {
         int indexOfSection = find(section);
-        this.sections[indexOfSection].drop(student);
+        try{
+            this.sections[indexOfSection].drop(student);
+        }
+        catch (Exception exception){
+            throw new Exception(exception.getMessage());
+        }
+
     }
 
     /**
@@ -180,14 +198,17 @@ public class Schedule
 
 
         }
-        for(Section s: this.sections) //print now that it is sorted
-        {
-            System.out.print(s+ " ");
+        for(int i = 0; i < numSections; i++){
+            Section currSection = sections[i];
+            System.out.println("[" + currSection.getCourse() + " " + currSection.getPeriod().getStart() + "]"
+                    + " "  + "[" + currSection.getInstructor().name().toUpperCase() + "]" +
+                    " " + "[" + currSection.getClassroom() + ", " + currSection.getClassroom().getBuilding() + ", " + currSection.getClassroom().getCampus() + "]");
+            currSection.print();
         }
     }
     public void printByCourse()
     {
-        System.out.println("print by code:  ");
+        System.out.println("* List of sections ordered by course number, section time * ");
         if(numSections == 0){
             System.out.println("Schedule is empty!");
             return;
@@ -202,7 +223,7 @@ public class Schedule
 
                 if (courseCompare < 0) swapIndex = j;
                 else if (courseCompare == 0) {
-                    if (sections[swapIndex].getTime().compareTo(sections[j].getTime()) < 0) swapIndex = j;
+                    if (sections[j].getPeriod().compareTo(sections[swapIndex].getPeriod()) < 0) swapIndex = j;
                 }
             }
             Section temp = sections[i];
@@ -212,11 +233,12 @@ public class Schedule
         for(int i = 0; i < numSections; i++){
             Section currSection = sections[i];
 
-            System.out.println("[" + currSection.getCourse() + " " + currSection.getTime().getStart() + "]"
-                    + " "  + "[" + currSection.getInstructor() + "]" +
+            System.out.println("[" + currSection.getCourse() + " " + currSection.getPeriod().getStart() + "]"
+                    + " "  + "[" + currSection.getInstructor().name().toUpperCase() + "]" +
                     " " + "[" + currSection.getClassroom() + ", " + currSection.getClassroom().getBuilding() + ", " + currSection.getClassroom().getCampus() + "]");
             currSection.print();
         }
+        System.out.println("* end of list *");
     }
 
 
@@ -253,7 +275,7 @@ public class Schedule
         for(int i = 0; i < numSections; i++)
         {
             Section currSection = this.sections[i];
-            if(currSection.getTime().equals(section.getTime())) //if period matches
+            if(currSection.getPeriod().equals(section.getPeriod())) //if period matches
             {
                 //check if student is in roster
                 if(currSection.contains(student)) return true;
@@ -263,32 +285,40 @@ public class Schedule
     }
 
 
-
-
     /**
-     Check if a student meets the prereqs for a section (major and year)
-     * @param section section to check prereqs
-     * @param student student that must meet prereqs
-     * @return true if student meets prereqs, false otherwise
+     Checks if a student has met the prereqs for the section
+     * @param section section to be checked
+     * @param student student to be checked
+     * @throws Exception throws exceptions for not meeting major/year prereqs
      */
-    private boolean metPrereq(Section section, Student student)
+    private void metPrereq(Section section, Student student) throws Exception
     {
-
         //major prereq
         String majorReq = section.getCourse().getMajorPrereq();
         if(!majorReq.equals("N/A") && !majorReq.equals(student.getMajor().name()))
         {
-            return false;
+            throw new Exception("Prereq: major only - " + "[" + student.getProfile().getFname() + " " + student.getProfile().getLname() + " " + student.getProfile().getDob() +  "]"
+                    + "[" + student.getMajor() + "]");
         }
 
         int threshold = 0;
         String yearReq = section.getCourse().getYearPrereq();
         //get year req in terms ofc credit
-        if(yearReq.equals("Freshman")) threshold = FRESHMAN;
-        else if(yearReq.equals("Sophomore")) threshold = SOPHOMORE;
-        else threshold = JUNIOR;
+        if (yearReq.equals("Freshman")) {
+        } else if (yearReq.equals("Sophomore")) {
+            threshold = FRESHMAN; // Must have at least 30
+        } else if (yearReq.equals("Junior")) {
+            threshold = SOPHOMORE; // Must have at least 60
+        } else if (yearReq.equals("Senior")) {
+            threshold = JUNIOR; // Must have at least 90
+        }
 
-        return(student.getCreditsCompleted() > threshold);
+        //need
+        if(!(student.getCreditsCompleted() >= threshold))
+        {
+            throw new Exception("Prereq: " + section.getCourse().getYearPrereq() + " - " + "[" + student.getProfile().getFname() + " " + student.getProfile().getLname() + " " + student.getProfile().getDob() +  "]"
+                    + "[" + student.getSchoolYear() + "]");
+        }
     }
 
     /**
@@ -299,11 +329,14 @@ public class Schedule
      */
     private boolean duplicateCourse(Section section, Student student)
     {
-        String courseNumber = section.getCourse().name();
+
+        Course checkCourse = section.getCourse();
         for(int i = 0; i < numSections; i++)
         {
-            if(courseNumber.equals(this.sections[i].getCourse().name()))
+            if(checkCourse.equals(this.sections[i].getCourse()))
             {
+                Course newCourse = this.sections[i].getCourse();
+
                 if(this.sections[i].contains(student)) return true;
             }
         }

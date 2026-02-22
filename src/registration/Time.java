@@ -4,10 +4,10 @@ package registration;
 public enum Time {
     PERIOD1("8:30", "9:50"),
     PERIOD2 ("10:20", "11:40"),
-    PERIOD3("12:10", "1:30"),
-    PERIOD4("2:00", "3:20"),
-    PERIOD5("3:50", "5:10"),
-    PERIOD6("5:40", "7:00");
+    PERIOD3("12:10", "13:30"),
+    PERIOD4("14:00", "15:20"),
+    PERIOD5("15:50", "17:10"),
+    PERIOD6("17:40", "19:00");
 
     private final String start;
     private final String end;
