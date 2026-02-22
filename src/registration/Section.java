@@ -72,8 +72,8 @@ public class Section {
      * @return TRUE if student found, FALSE otherwise
      */
     public boolean contains(Student student) {
-        for(Student s: roster){
-            if(s.equals(student)) return true;
+        for(int i = 0; i < numStudents; i++){
+            if(roster[i].equals(student)) return true;
         }
         return false;
     }

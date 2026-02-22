@@ -105,17 +105,12 @@ public class Frontend {
      */
     private void setREMOVE_CMD(String input)
     {
-        System.out.println("running remove cmd");
-        Student removeStudent = findStudent(input);
-        StringTokenizer t = new StringTokenizer(input);
-        String fname = t.nextToken();
-        String lname = t.nextToken();
-        String dob = t.nextToken();
-        if (removeStudent == null || !studentList.contains(removeStudent)) {
-            System.out.println("[" + fname + " " + lname + " "  + dob + "]" + " is not in the student list!");
-            return;
+        try{
+            Student removeStudent = findStudent(input);
+            studentList.remove(removeStudent);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
-        studentList.remove(removeStudent);
     }
 
     /**
@@ -225,34 +220,40 @@ public class Frontend {
      */
     private void setENROLL_CMD(String input){
         System.out.println("running enroll cmd");
-        Student student = findStudent(input); //this is student we want to enroll
-
-        StringTokenizer s =  new StringTokenizer(input);
-        //skip name and dob
-        s.nextToken(); s.nextToken(); s.nextToken();
-
-        //maybe make this into helper later if we want im just writing to finish it (ik its duped from one above)
-        String courseString = s.nextToken();
-        int periodInt = Integer.parseInt(s.nextToken());
-        //check if period is valid
-        if(periodInt < 0 || periodInt > 6) return; //exit
-        if(!isValidCourse(courseString)) return;
-
-        Course course = Course.valueOf(courseString.toUpperCase());
-        Time period = getPeriod(periodInt);
-        Section[] sections = schedule.getSections();
-        Section section = null;
-        //getting section if it exists
-        for(int i = 0; i < sections.length; i++) //loop through sections
-        {
-            if(sections[i].getCourse().equals(course) && sections[i].getTime().equals(period)){
-                section = sections[i];
+        try{
+            Student student = findStudent(input); //this is student we want to drop from sec
+            StringTokenizer s =  new StringTokenizer(input);
+            //skip name and dob
+            s.nextToken(); s.nextToken(); s.nextToken();
+            //maybe make this into helper later if we want im just writing to finish it (ik its duped from one above)
+            String courseString = s.nextToken();
+            int periodInt = Integer.parseInt(s.nextToken());
+            if(!isValidPeriod(periodInt)){
+                throw new Exception("INVALID: period " + periodInt + " does not exist.");
             }
-        }
+            if(!isValidCourse(courseString)){
+                throw new Exception("INVALID: course " + courseString + " does not exist.");
+            }
 
-        if(studentList.contains(student) && section != null) // student list has student and section exists, enroll
-        {
-            schedule.enroll(section, student);
+            Course course = Course.valueOf(courseString.toUpperCase());
+            Time period = getPeriod(periodInt);
+            Section[] sections = schedule.getSections();
+            Section section = null;
+            //getting section if it exists
+            for(int i = 0; i < schedule.getNumSections(); i++) //loop through sections
+            {
+                if(sections[i].getCourse().equals(course) && sections[i].getTime().equals(period)){
+                    section = sections[i];
+                }
+            }
+
+            if(studentList.contains(student) && section != null) // student list has student and section exists, enroll
+            {
+                //ISSUUE IS IN THE ENROLL SECTION PART!!!!something about
+                schedule.enroll(section, student);
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
     }
 
@@ -262,33 +263,37 @@ public class Frontend {
      */
     private void setDROP_CMD(String input){
         System.out.println("running drop cmd");
+        //find student returns an exception
+        try{
+            Student student = findStudent(input); //this is student we want to drop from sec
+            StringTokenizer s =  new StringTokenizer(input);
+            //skip name and dob
+            s.nextToken(); s.nextToken(); s.nextToken();
+            //maybe make this into helper later if we want im just writing to finish it (ik its duped from one above)
+            String courseString = s.nextToken();
+            int periodInt = Integer.parseInt(s.nextToken());
+            if(!isValidPeriod(periodInt)){
+                throw new Exception("INVALID: period " + periodInt + " does not exist.");
+            }
+            if(!isValidCourse(courseString)){
+                throw new Exception("INVALID: course " + courseString + " does not exist.");
+            }
+            Course course = Course.valueOf(courseString.toUpperCase());
+            Time period = getPeriod(periodInt);
+            Section[] sections = schedule.getSections();
+            Section section = null;
+            for(int i = 0 ; i < schedule.getNumSections(); i++) //loop through sections
+            {
+                if(sections[i].getCourse().equals(course) && sections[i].getTime().equals(period)) section = sections[i];
+            }
 
-        Student student = findStudent(input); //this is student we want to drop from sec
-        StringTokenizer s =  new StringTokenizer(input);
-        //skip name and dob
-        s.nextToken(); s.nextToken(); s.nextToken();
-
-        //maybe make this into helper later if we want im just writing to finish it (ik its duped from one above)
-        String courseString = s.nextToken();
-        int periodInt = Integer.parseInt(s.nextToken());
-        //check if period is valid
-        if(periodInt < 0 || periodInt > 6) return; //exit
-        if(!isValidCourse(courseString)) return;
-
-        Course course = Course.valueOf(courseString.toUpperCase());
-        Time period = getPeriod(periodInt);
-
-        Section section = null;
-        for(Section sec: schedule.getSections()) //loop through sections
-        {
-            if(sec.getCourse().equals(course) && sec.getTime().equals(period)) section = sec;
+            if(studentList.contains(student) && section != null) // student list has student and section exists, enroll
+            {
+                schedule.drop(section, student);
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
-
-        if(studentList.contains(student) && section != null) // student list has student and section exists, enroll
-        {
-            schedule.drop(section, student);
-        }
-
     }
 
     /*
@@ -402,11 +407,11 @@ public class Frontend {
     /**
      Find student using their name and DOB
      * @param input Student's first name, last name, and DOB in one string
-     * @return student that matches input, null otherwise
+     * @return student that matches input, Exception otherwise
      */
-    private Student findStudent(String input)
+    private Student findStudent (String input) throws Exception
     {
-        Student student = new Student();
+        Student student;
         StringTokenizer str =  new StringTokenizer(input);
         String fname = str.nextToken();
         String lname = str.nextToken();
@@ -422,9 +427,12 @@ public class Frontend {
         Profile profile = new Profile (fname, lname, dob);
         for(int i = 0; i < studentList.getSize(); i++){
             Profile check = studentList.getList()[i].getProfile();
-            if(check.equals(profile)) student = studentList.getList()[i];
+            if(check.equals(profile)) {
+                student = studentList.getList()[i];
+                return student;
+            }
         }
-        return student;
+        throw new Exception("[" + fname + " " + lname + " " + dobString +  "]" + " does not exist.");
     }
     /**
      Fill student attributes using input
@@ -554,8 +562,15 @@ public class Frontend {
         return true;
     }
 
+    /**
+     * Is the student valid, ie does makestudent student
+     * @param student student to be checked
+     * @return T if valid, F if false
+     */
     private boolean isValidStudent(String student){
-        Student currStudent;
+        Student currStudent = new Student();
+        makeStudent(student,currStudent);
+        if(currStudent.getSchoolYear().isEmpty())return false;
         return true;
     }
 

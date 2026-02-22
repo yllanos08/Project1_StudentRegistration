@@ -115,6 +115,8 @@ public class Schedule
         {
             section.enroll(student);
         }
+        System.out.println("[" + student.getProfile().getFname() + " " + student.getProfile().getLname() + "]" +
+                " added to " + section.getCourse() + " " + section.getTime().getStart() + ".");
     }
     /**
      Drop a student from a section
