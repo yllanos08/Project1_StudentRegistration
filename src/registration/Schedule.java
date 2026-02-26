@@ -17,7 +17,7 @@ public class Schedule
 
 
     /**
-     Constructor
+     Default Constructor
      */
     Schedule()
     {
@@ -158,6 +158,9 @@ public class Schedule
         return true;
     }
 
+    /**
+     Print schedule of classes sorted by campus then building
+     */
     public void printByClassroom()
     {
         if(this.numSections == 0){
@@ -206,6 +209,10 @@ public class Schedule
             currSection.print();
         }
     }
+
+    /**
+     Print schedule of classes by course number then period
+     */
     public void printByCourse()
     {
         System.out.println("* List of sections ordered by course number, section time * ");

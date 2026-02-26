@@ -14,11 +14,21 @@ public class Student implements Comparable<Student> {
     private final int SOPHOMORE = 60;
     private final int JUNIOR = 90;
 
+
+    /**
+     Parameterized Constructor
+     * @param profile
+     * @param major
+     * @param creditsCompleted
+     */
     Student(Profile profile, Major major, int creditsCompleted){
         this.profile = profile;
         this.major = major;
         this.creditsCompleted = creditsCompleted;
     }
+    /*
+    Default constructor
+     */
     public Student(){}
 
 

@@ -109,6 +109,9 @@ public class StudentList {
         System.out.println("* end of list **");
     }
 
+    /**
+     Sort list of students by last name, first name, then DOB
+     */
     private void sort(){
         for(int i = 0; i < this.size; i++){
             Student smallestStu = this.list[i];
@@ -126,8 +129,5 @@ public class StudentList {
         }
     }
 
-    public static void main(String[] args){
-        StudentList list = new StudentList();
-    }
 
 }
