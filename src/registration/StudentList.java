@@ -74,8 +74,7 @@ public class StudentList {
         //make last student nothing
         this.list[size--] = null;
         this.list[indexOfReplacee] = lastStudent;
-        System.out.println("[" + student.getProfile().getFname() + " " + student.getProfile().getLname() + " " + student.getProfile().getDob() + "]"
-                + " removed from the list");
+
     }
 
     /**

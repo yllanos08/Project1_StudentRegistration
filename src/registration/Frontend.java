@@ -71,31 +71,28 @@ public class Frontend {
      */
     private void setADD_CMD(String input)
     {
-        Student addedStudent = new Student();
-        String majorString = makeStudent(input, addedStudent);
-        if(!isValidMajor(majorString)){
-            System.out.println("INVALID: " + majorString + " major does not exixt!");
-            return;
-        }
+        try{
+            Student addedStudent = new Student();
+            String majorString = makeStudent(input, addedStudent);
+            if(!isValidMajor(majorString)) throw new Exception("INVALID: " + majorString + " major does not exist!");
 
-        Date dob = addedStudent.getProfile().getDob();
+            Date dob = addedStudent.getProfile().getDob();
+            validateDOB(dob);
 
-        int creditsCompleted = addedStudent.getCreditsCompleted();
+            int creditsCompleted = addedStudent.getCreditsCompleted();
+            if(studentList.contains(addedStudent)) throw new Exception("[" + addedStudent.getProfile().getFname() + " " + addedStudent.getProfile().getLname() + " "
+                    + dob + "]" +
+                    " " + "student is already in the list");
+            if(creditsCompleted < 0) throw new Exception(creditsCompleted  + " " + "credit is negative!");
 
-        if(validateDOB(dob) == 0) System.out.println("INVALID: " + dob + " younger than 16 years old.");
-        if(validateDOB(dob) == -1) System.out.println("INVALID: " + dob + " cannot be today or a future date.");
-        if(validateDOB(dob) == -2) System.out.println("INVALID: " + dob + " is not a valid calendar date!" );
-        if(studentList.contains(addedStudent)) System.out.println("[" + addedStudent.getProfile().getFname() + " " + addedStudent.getProfile().getLname() + " "
-                + dob + "]" +
-                " " + "student is already in the list");
-        if(creditsCompleted < 0) System.out.println(creditsCompleted  + " " + "credit is negative!");
-        if(validateDOB(dob) == 1 && creditsCompleted > 0 && !studentList.contains(addedStudent)){
             studentList.add(addedStudent);
             System.out.println("[" + addedStudent.getProfile().getFname() + " " + addedStudent.getProfile().getLname() + " "
-                    + dob + "]" +
-                    " " + "added to the list");
-        }
+                        + dob + "]" +
+                        " " + "added to the list");
 
+        }catch (Exception exception){
+            System.out.println(exception.getMessage());
+        }
     }
 
     /**
@@ -115,65 +112,52 @@ public class Frontend {
 
     /**
      * Offer a new section of a course if possible
-     * @param input course, period, instructor, classroom
+     * @param input string as course, period, instructor, classroom
      */
     private void setOFFER_CMD(String input) {
-        StringTokenizer s = new StringTokenizer(input);
-        String courseString = s.nextToken();
-        int periodNum = Integer.parseInt(s.nextToken());
-        String instructorString = s.nextToken();
-        String classroomString = s.nextToken();
+        try{
+            StringTokenizer s = new StringTokenizer(input);
+            String courseString = s.nextToken();
+            int periodNum = Integer.parseInt(s.nextToken());
+            String instructorString = s.nextToken();
+            String classroomString = s.nextToken();
 
-        //valid course
-        if (!isValidCourse(courseString)) {
-            System.out.println("INVALID: " + "course name " + courseString + " does not exist");
-            return;
-        }
-        //valid period
-        if (!isValidPeriod(periodNum)){
-            System.out.println("INVALID: " + "period " + periodNum + " does not exist");
-            return;
-        }
-        //no time conflicts
-        if (!(isValidPeriodTime(courseString, periodNum))){
-            System.out.println("INVALID: " + courseString.toUpperCase() + " period " + periodNum + " already exists");
-            return;
-        }
-        //instructor is valid
-        if (!isValidInstructor(instructorString)){
-            System.out.println("INVALID: " + "instructor " + instructorString + " does not exist");
-            return;
-        }
-        //instructor doesnt have time conflict YSA DID THIS!
-        if(!isInstructorTimeConflict(instructorString,periodNum)){
-            System.out.println("INVALID: " + instructorString.toUpperCase() + " time conflict.");
-            return;
-        }
-        //classroom is valid
-        if (!isValidClassroom(classroomString)) {
-            System.out.println("INVALID: " + "classroom " + classroomString + " does not exist");
-            return;
-        }
-        //classroomm is availabile
-        if (!isAvailableClassroom(classroomString, periodNum)) {
-            Classroom classroom = Classroom.valueOf((classroomString.toUpperCase()));
-            System.out.println("INVALID: " + "[" + classroom + ", " + classroom.getBuilding() + ", " + classroom.getCampus() + "]" + " is not available!");
-            return;
-        }
+            //valid course
+            if (!isValidCourse(courseString))throw new Exception("INVALID: " + "course name " + courseString + " does not exist");
 
-        //now after all checks we can add the classroom into the schedule
-        Course c = Course.valueOf(courseString.toUpperCase());
-        String formattedName = instructorString.substring(0, 1).toUpperCase()
-                + instructorString.substring(1).toLowerCase();
-        Instructor i = Instructor.valueOf(formattedName);
-        Time t = getPeriod(periodNum);
-        Classroom classroom = Classroom.valueOf(classroomString.toUpperCase());
+            //valid period
+            if (!isValidPeriod(periodNum))throw new Exception("INVALID: " + "period " + periodNum + " does not exist");
+            //no time conflicts
+            if (!(isValidPeriodTime(courseString, periodNum)))throw new Exception("INVALID: " + courseString.toUpperCase() + " period " + periodNum + " already exists");
+            //instructor is valid
+            if (!isValidInstructor(instructorString))throw new Exception("INVALID: " + "instructor " + instructorString + " does not exist");
+            //instructor doesnt have time conflict YSA DID THIS!
+            if(!isInstructorTimeConflict(instructorString,periodNum))throw new Exception("INVALID: " + instructorString.toUpperCase() + " time conflict.");
 
-        Section newSection = new Section(c,i,classroom,t);
-        schedule.add(newSection);
-        System.out.println("[" + c + " " + t.getStart() + "] "
-        + "[" + i + "]" + " "
-        + "[" + classroom + ", " + classroom.getBuilding() + ", " + classroom.getCampus() + "]" + " added to the schedule." );
+            //classroom is valid
+            if (!isValidClassroom(classroomString))throw new Exception("INVALID: " + "classroom " + classroomString + " does not exist");
+            //classroomm is availabile
+            if (!isAvailableClassroom(classroomString, periodNum)) {
+                Classroom classroom = Classroom.valueOf((classroomString.toUpperCase()));
+                throw new Exception("INVALID: " + "[" + classroom + ", " + classroom.getBuilding() + ", " + classroom.getCampus() + "]" + " is not available!");
+            }
+
+            //now after all checks we can add the classroom into the schedule
+            Course c = Course.valueOf(courseString.toUpperCase());
+            String formattedName = instructorString.substring(0, 1).toUpperCase()
+                    + instructorString.substring(1).toLowerCase();
+            Instructor i = Instructor.valueOf(formattedName);
+            Time t = getPeriod(periodNum);
+            Classroom classroom = Classroom.valueOf(classroomString.toUpperCase());
+
+            Section newSection = new Section(c,i,classroom,t);
+            schedule.add(newSection);
+            System.out.println("[" + c + " " + t.getStart() + "] "
+                    + "[" + i + "]" + " "
+                    + "[" + classroom + ", " + classroom.getBuilding() + ", " + classroom.getCampus() + "]" + " added to the schedule." );
+        }catch (Exception exception){
+            System.out.println(exception.getMessage());
+        }
     }
 
     /**
@@ -292,14 +276,14 @@ public class Frontend {
     }
 
 
-
     /**
-     * Check if provided DOB is valid
-     * @param dob given DOB
-     * @return 1 if valid DOB, 0 if younger than 16, -1 if date is in the future, -2 if notvalid
+     * Throws exception if DOB is valid
+      * @param dob date of birth to be checked
+     * @throws Exception different exception depending on error: future check, 16 y/o check, valid calendar date
      */
-    private int validateDOB(Date dob)
+    private void validateDOB(Date dob) throws Exception
     {
+
         Calendar calRightNow = Calendar.getInstance();
         int currYear = calRightNow.get(Calendar.YEAR);
         int currMonth = calRightNow.get(Calendar.MONTH);
@@ -307,22 +291,20 @@ public class Frontend {
         Date rightNow = new Date(currYear, currMonth, currDay);
 
         //future date check
-        if(dob.compareTo(rightNow) > 0) return -1;
+        if(dob.compareTo(rightNow) > 0) throw new Exception("INVALID: " + dob + " cannot be today or a future date.");
 
         //16 y/o check
-        if(currYear - dob.getYear() < 16) return 0;
+        if(currYear - dob.getYear() < 16) throw new Exception("INVALID: " + dob + " younger than 16 years old.");
         else if(currYear - dob.getYear() == 16)
         {
-            if(currMonth < dob.getMonth()) return 0;
+            if(currMonth < dob.getMonth()) throw new Exception("INVALID: " + dob + " younger than 16 years old.");
             else if (currMonth == dob.getMonth())
             {
-                if(currDay < dob.getDay()) return 0;
+                if(currDay < dob.getDay()) throw new Exception("INVALID: " + dob + " younger than 16 years old.");
             }
         }
-
         //make sure dob is valid calendar date
-        if(!dob.isValid()) return -2;
-        return 1;
+        if(!dob.isValid()) throw new Exception("INVALID: " + dob + " is not a valid calendar date!");
     }
 
     /**
@@ -374,9 +356,10 @@ public class Frontend {
     }
 
     /**
-     Find student using their name and DOB
-     * @param input Student's first name, last name, and DOB in one string
-     * @return student that matches input, Exception otherwise
+     * Finds student in student roster based on string
+     * @param input string input, fname lname dob format
+     * @return Student that matches input
+     * @throws Exception - if student cannot be found
      */
     private Student findStudent (String input) throws Exception
     {
