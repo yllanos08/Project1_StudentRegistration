@@ -9,6 +9,7 @@ import java.util.Iterator;
  */
 public class List <E> implements Iterable <E>{
     private static final int CAPACITY = 4;
+    private static final int NOT_FOUND = -1;
     private E[] objects;
     private int size;
 
@@ -29,9 +30,11 @@ public class List <E> implements Iterable <E>{
      */
     private int find(E e)
     {
-
-
-        return -1;
+        for(int i = 0; i < size; i++)
+        {
+            if(objects[i].equals(e)) return i;
+        }
+        return NOT_FOUND;
     }
 
     /**
@@ -39,7 +42,12 @@ public class List <E> implements Iterable <E>{
      */
     private void grow()
     {
-
+        E[] newList = (E[]) new Object [objects.length + CAPACITY];
+        for(int i = 0; i < objects.length; i++)
+        {
+            newList[i] = objects[i];
+        }
+        this.objects = newList;
     }
 
     /**
@@ -49,7 +57,8 @@ public class List <E> implements Iterable <E>{
      */
     public boolean contains(E e)
     {
-        return false;
+        if(this.find(e) == NOT_FOUND) return false;
+        return true;
     }
 
     /**
@@ -58,7 +67,8 @@ public class List <E> implements Iterable <E>{
      */
     public void add(E e)
     {
-
+        if(isFull()) this.grow();
+        objects[size++] = e;
     }
 
 
@@ -68,7 +78,13 @@ public class List <E> implements Iterable <E>{
      */
     public void remove (E e)
     {
+        int indexOfReplacee = this.find(e);
+        if(indexOfReplacee == NOT_FOUND) return; //exit if not found
+        E lastObject = this.objects[size - 1];
 
+
+        this.objects[size--] = null;
+        this.objects[indexOfReplacee] = lastObject;
     }
 
     /**
@@ -77,7 +93,7 @@ public class List <E> implements Iterable <E>{
      */
     public boolean isEmpty()
     {
-        return false;
+        return this.size == 0;
     }
 
     /**
@@ -86,7 +102,7 @@ public class List <E> implements Iterable <E>{
      */
     public int size()
     {
-        return this.size();
+        return this.size;
     }
 
     /**
@@ -113,7 +129,7 @@ public class List <E> implements Iterable <E>{
      */
     public void set (int index, E e)
     {
-
+        objects[index] = e;
     }
 
     /**
@@ -123,9 +139,16 @@ public class List <E> implements Iterable <E>{
      */
     public int indexOf(E e)
     {
+        return find(e);
+    }
 
-
-        return -1;
+    /**
+     Determines if the list is full
+     * @return true if at max capacity; false otherwise
+     */
+    private boolean isFull()
+    {
+        return this.size == this.objects.length;
     }
 
     /**
