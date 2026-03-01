@@ -1,105 +1,38 @@
 package registration;
-
+import util.List;
+import util.Sort;
 /**
  Schedule class
  @author Ysabella Llanos, Kevin Toan
  */
-public class Schedule
+public class Schedule extends List<Section>
 {
-    private static final int NOT_FOUND = -1;
-    private static final int CAPACITY = 4;
-    private Section[] sections; // all the sections
-    private int numSections;
-
     private final int FRESHMAN = 30;
     private final int SOPHOMORE = 60;
     private final int JUNIOR = 90;
-
 
     /**
      Default Constructor
      */
     Schedule()
     {
-        this.numSections = 0;
-        this.sections = new Section[CAPACITY];
-    }
-
-    public int getNumSections(){return numSections;}
-    /**
-     * get method for sections
-     * @return list of sections in this.schedule
-     */
-    public Section[] getSections(){return sections;}
-    /**
-     Find a section in our current list
-     * @param section section to be found
-     * @return the index of section in the list, -1 otherwise
-     */
-    private int find(Section section)
-    {
-        for(int i = 0; i < this.sections.length; i++)
-        {
-            if(section.equals(this.sections[i])) return i;
-        }
-        return NOT_FOUND;
+        super();
     }
 
     /**
-     Determines if the current section list is full
-     * @return true if at max capacity, false otherwise
+     Remove section from schedule
+     * @param section section to be removed
      */
-    private boolean isFull()
-    {
-        return this.numSections == this.sections.length;
-    }
-
-    /**
-     Increase capacity by 4
-     */
-    private void grow()
-    {
-        Section [] newList = new Section [this.sections.length + CAPACITY];
-        for(int i = 0; i < this.sections.length; i++)
-        {
-            newList[i] = this.sections[i];
-        }
-        this.sections = newList;
-    }
-
-    /**
-     Add section to list of sections
-     * @param section section to be added
-     */
-    public void add(Section section)
-    {
-        if(isFull())
-        {
-            this.grow();
-        }
-        sections[numSections++] = section;
-    }
-
-    /**
-     Tries to remove section from schedule (closing cmd)
-     checks if section is empty first
-     * @param section section to be closed
-     * @throws Exception if section is empty
-     */
-    public void remove(Section section) throws Exception
+    @Override
+    public void remove(Section section)
     {
         if (section.getNumStudents() > 0) {
-            throw new Exception(section.getCourse() + " " + section.getPeriod().getStart() + " cannot be removed "
+            throw new IllegalArgumentException(section.getCourse() + " " + section.getPeriod().getStart() + " cannot be removed "
                     + "[" + section.getNumStudents() + " student(s) enrolled" + "]");
         }
-        Section lastSection = this.sections[numSections - 1]; //get last section
-
-        //replace last with what we want to remove
-
-        int index = this.find(section);
-        this.sections[numSections--] = null;
-        this.sections[index] = lastSection;
+        super.remove(section);
     }
+
 
     /**
      Enroll a student into a section
@@ -137,9 +70,9 @@ public class Schedule
      */
     public void drop(Section section, Student student) throws Exception
     {
-        int indexOfSection = find(section);
+        int indexOfSection = this.indexOf(section);
         try{
-            this.sections[indexOfSection].drop(student);
+            this.get(indexOfSection).drop(student);
         }
         catch (Exception exception){
             throw new Exception(exception.getMessage());
@@ -148,61 +81,20 @@ public class Schedule
     }
 
     /**
-     Check if section is in schedule
-     * @param section section to be found
-     * @return true if section is in schedule, false otherwise
-     */
-    public boolean contains(Section section)
-    {
-        if(this.find(section) == NOT_FOUND) return false;
-        return true;
-    }
-
-    /**
      Print schedule of classes sorted by campus then building
      */
     public void printByClassroom()
     {
-        if(this.numSections == 0){
+        System.out.println("* List of sections ordered by campus, building * ");
+        if(this.size() == 0){
             System.out.println("Schedule is empty!");
             return;
         }
-        //selection sort
-        for(int i = 0; i < this.numSections; i++)
-        {
-            int swapIndex = i;
-            Section smallestSection = this.sections[i];
-            for(int j = i + 1; j < this.numSections; j++)
-            {
-                //compare by campus first
 
-                //if equal go by building
-                //collegeave.compareTo(busch) will return 1
-                int campusCompare = smallestSection.getClassroom().getCampus().compareTo(this.sections[j].getClassroom().getCampus());
-                if(campusCompare > 0)
-                {
-                    swapIndex = j;
-                    smallestSection = this.sections[j];
-                }
-                if(campusCompare == 0)
-                {
-                    //check building
-                    if(smallestSection.getClassroom().getBuilding().compareTo(this.sections[j].getClassroom().getBuilding()) > 0)
-                    {
-                        swapIndex = j;
-                        smallestSection = this.sections[j];
+        Sort.locSort(this);
 
-                    }
-                }
-            }
-            Section temp = this.sections[i];
-            this.sections[i] = this.sections[swapIndex];
-            this.sections[swapIndex] = temp;
-
-
-        }
-        for(int i = 0; i < numSections; i++){
-            Section currSection = sections[i];
+        for(int i = 0; i < this.size(); i++){
+            Section currSection = this.get(i);
             System.out.println("[" + currSection.getCourse() + " " + currSection.getPeriod().getStart() + "]"
                     + " "  + "[" + currSection.getInstructor().name().toUpperCase() + "]" +
                     " " + "[" + currSection.getClassroom() + ", " + currSection.getClassroom().getBuilding() + ", " + currSection.getClassroom().getCampus() + "]");
@@ -216,29 +108,14 @@ public class Schedule
     public void printByCourse()
     {
         System.out.println("* List of sections ordered by course number, section time * ");
-        if(numSections == 0){
+        if(this.size() == 0){
             System.out.println("Schedule is empty!");
             return;
         }
-        //selection sort by course#, then period
-        for(int i = 0; i < numSections; i++)
-        {
-            int swapIndex = i;
-           // Section smallestSection = this.sections[i];
-            for(int j = i + 1; j < this.numSections; j++) {
-                int courseCompare = sections[j].getCourse().name().compareTo(sections[swapIndex].getCourse().name());;
 
-                if (courseCompare < 0) swapIndex = j;
-                else if (courseCompare == 0) {
-                    if (sections[j].getPeriod().compareTo(sections[swapIndex].getPeriod()) < 0) swapIndex = j;
-                }
-            }
-            Section temp = sections[i];
-            sections[i] = sections[swapIndex];
-            sections[swapIndex] = temp;
-        }
-        for(int i = 0; i < numSections; i++){
-            Section currSection = sections[i];
+        Sort.courseSort(this);
+        for(int i = 0; i < this.size(); i++){
+            Section currSection = this.get(i);
 
             System.out.println("[" + currSection.getCourse() + " " + currSection.getPeriod().getStart() + "]"
                     + " "  + "[" + currSection.getInstructor().name().toUpperCase() + "]" +
@@ -259,9 +136,9 @@ public class Schedule
     {
         int creditCount = 0;
         //loop thru all sections
-        for(int i = 0; i < numSections; i++)
+        for(int i = 0; i < this.size(); i++)
         {
-            Section currSection = this.sections[i];
+            Section currSection = this.get(i);
             if(currSection.contains((student)))
             {
                 //if student is in section, increase the number of credits
@@ -279,9 +156,9 @@ public class Schedule
      */
     private boolean checkStudentTimeConflict(Section section, Student student)
     {
-        for(int i = 0; i < numSections; i++)
+        for(int i = 0; i < this.size(); i++)
         {
-            Section currSection = this.sections[i];
+            Section currSection = this.get(i);
             if(currSection.getPeriod().equals(section.getPeriod())) //if period matches
             {
                 //check if student is in roster
@@ -290,7 +167,6 @@ public class Schedule
         }
         return false;
     }
-
 
     /**
      Checks if a student has met the prereqs for the section
@@ -338,21 +214,15 @@ public class Schedule
     {
 
         Course checkCourse = section.getCourse();
-        for(int i = 0; i < numSections; i++)
+        for(int i = 0; i < this.size(); i++)
         {
-            if(checkCourse.equals(this.sections[i].getCourse()))
+            if(checkCourse.equals(this.get(i).getCourse()))
             {
-                Course newCourse = this.sections[i].getCourse();
+                Course newCourse = this.get(i).getCourse();
 
-                if(this.sections[i].contains(student)) return true;
+                if(this.get(i).contains(student)) return true;
             }
         }
         return false;
     }
-
-
-
-
 }
-
-
