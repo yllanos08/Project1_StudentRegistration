@@ -379,10 +379,10 @@ public class Frontend {
         Date dob = new Date(year, month, day);
 
         Profile profile = new Profile (fname, lname, dob);
-        for(int i = 0; i < studentList.getSize(); i++){
-            Profile check = studentList.getList()[i].getProfile();
+        for(int i = 0; i < studentList.size(); i++){
+            Profile check = studentList.get(i).getProfile();
             if(check.equals(profile)) {
-                student = studentList.getList()[i];
+                student = studentList.get(i);
                 return student;
             }
         }
