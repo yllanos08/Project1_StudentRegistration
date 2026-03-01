@@ -1,5 +1,7 @@
 package registration;
 
+import util.Date;
+
 /**
  Profile class
  @author Ysabella Llanos, Kevin Toan

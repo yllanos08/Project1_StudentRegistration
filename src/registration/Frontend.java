@@ -1,4 +1,6 @@
 package registration;
+import util.Date;
+
 import java.util.Scanner;
 import java.util.StringTokenizer;
 import java.util.Calendar;
