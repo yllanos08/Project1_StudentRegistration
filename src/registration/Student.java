@@ -5,7 +5,7 @@ package registration;
  * @author Kevin Toan, Ysabella Llanos
  */
 
-public class Student implements Comparable<Student> {
+abstract class Student implements Comparable<Student> {
     private Profile profile;
     private Major major;
     private int creditsCompleted;
@@ -13,8 +13,9 @@ public class Student implements Comparable<Student> {
     private final int FRESHMAN = 30;
     private final int SOPHOMORE = 60;
     private final int JUNIOR = 90;
-
-
+    protected final double FULLTIME_UNVERSITYFEE = 3891;
+    protected final double PARTTIME_UNIVERSITYFEE = FULLTIME_UNVERSITYFEE/2;
+    public abstract double tuition(int creditsEnrolled);
     /**
      Parameterized Constructor
      * @param profile
@@ -31,7 +32,9 @@ public class Student implements Comparable<Student> {
      */
     public Student(){}
 
-
+    /*
+    Getters & Setters
+     */
     public void setProfile(Profile profile){this.profile = profile;}
     public void setMajor(Major major){this.major = major;}
     public void setCreditsCompleted(int creditsCompleted){this.creditsCompleted = creditsCompleted;}
@@ -77,7 +80,6 @@ public class Student implements Comparable<Student> {
      * format: profile + major + creditscompleted
      * @return string
      */
-
     @Override
     public String toString(){
         return "[" + profile.getFname() + " " + profile.getLname() + " " + profile.getDob() + "]" + " "
@@ -104,6 +106,8 @@ public class Student implements Comparable<Student> {
         }
         return 0;
     }
+
+
 
 
 }

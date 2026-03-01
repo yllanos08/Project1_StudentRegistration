@@ -1,0 +1,27 @@
+package registration;
+
+public class NonResident extends Student{
+    private final int FULLTIME_TUITION = 35758;
+    private final int PARTTIME_TUITION_PERCREDIT = 1162;
+
+    @Override
+    public double tuition(int creditsEnrolled) {
+        double finalTuition = 0;
+        //part time student
+        if(creditsEnrolled < 12){
+            finalTuition += creditsEnrolled * PARTTIME_TUITION_PERCREDIT;
+            finalTuition += PARTTIME_UNIVERSITYFEE;
+        }
+
+        //full time student
+        if(creditsEnrolled >= 12){
+            finalTuition += FULLTIME_TUITION;
+            finalTuition += FULLTIME_UNVERSITYFEE;
+            if(creditsEnrolled > 16){
+                int creditsOver = creditsEnrolled - 16;
+                finalTuition += creditsOver * PARTTIME_TUITION_PERCREDIT;
+            }
+        }
+        return finalTuition;
+    }
+}
