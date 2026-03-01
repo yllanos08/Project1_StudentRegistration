@@ -11,7 +11,7 @@ public class Section {
     private Instructor instructor;
     private Classroom classroom;
     private Time time; //time period
-    private Student[] roster;
+    private StudentList roster;
     private int numStudents;
 
     /**
@@ -27,7 +27,7 @@ public class Section {
         this.classroom = classroom;
         this.time = time;
 
-        roster = new Student[CAPACITY];
+        roster = new StudentList();
         numStudents = 0;
     }
 
@@ -35,9 +35,9 @@ public class Section {
     public Instructor getInstructor(){return this.instructor;}
     public Classroom getClassroom(){return this.classroom;}
     public Time getPeriod() {return this.time;}
-    public Student[] getRoster() {return this.roster;}
+    public StudentList getRoster() {return this.roster;}
 
-    public int getNumStudents(){return this.numStudents;}
+    public int getNumStudents(){return roster.size();}
 
 
 
@@ -51,8 +51,8 @@ public class Section {
 
         if(isFull()) throw new Exception("Cannot enroll " + "[" + student.getProfile().getFname() + " " + student.getProfile().getLname() + " "
         + student.getProfile().getDob() + "]," + " " + this.getCourse() + " " + this.getPeriod().getStart() + " is full.");
-        if(contains(student)) throw new Exception("Student already in section");
-        roster[numStudents++] = student;
+        if(roster.contains(student)) throw new Exception("Student already in section");
+        roster.add(student);
     }
 
     /**
@@ -60,41 +60,11 @@ public class Section {
      * @param student - student TBR (to be removed)
      */
     public void drop(Student student) throws Exception {
-        if(!contains(student)){
+        if(!roster.contains(student)){
             throw new Exception ("[" + student.getProfile().getFname() + " " + student.getProfile().getLname() + " " + student.getProfile().getDob()
                                 + "] " + "is not enrolled in this section.");
         }
-        int indexOfStudent = find(student);
-        //remove and replace
-        Student lastStudent = roster[numStudents - 1];
-        roster[indexOfStudent] = lastStudent;
-        roster[numStudents - 1] = null;
-        numStudents--;
-    }
-
-
-    /**
-     * Check if student is in roster
-     * @param student student TBF (to be found)
-     * @return TRUE if student found, FALSE otherwise
-     */
-    public boolean contains(Student student) {
-        for(int i = 0; i < numStudents; i++){
-            if(roster[i].equals(student)) return true;
-        }
-        return false;
-    }
-
-    /**
-     * Finds index of student
-     * @param student student TBF (to be found)
-     * @return index of student in roster
-     */
-    public int find(Student student){
-        for(int i = 0; i < numStudents; i++){
-            if(roster[i].equals(student)) return i;
-        }
-        return -1;
+        roster.remove(student);
     }
 
     /**
@@ -102,24 +72,23 @@ public class Section {
      * @return TRUE if full, False otherwise
      */
     public boolean isFull() {
-        return numStudents == CAPACITY;
+        return roster.size() == CAPACITY;
     }
 
     /**
      * prints out roster of the section
      */
     public void print() {
-        if(numStudents == 0) System.out.println("** No students Enrolled **");
+        if(roster.isEmpty()) System.out.println("** No students Enrolled **");
         else{
             System.out.println("** Roster **");
-            for(int i = 0; i < numStudents; i++){
-                Student currStudent = roster[i];
+            for(int i = 0; i < roster.size(); i++){
+                Student currStudent = roster.get(i);
                 System.out.println("    [" +  currStudent.getProfile().getFname() + " " + currStudent.getProfile().getLname() + " " + currStudent.getProfile().getDob() + "]");
             }
         }
 
     }
-
 
     /**
      Compare 2 Section objects to see if they are equal.

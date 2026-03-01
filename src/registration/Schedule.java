@@ -139,7 +139,7 @@ public class Schedule extends List<Section>
         for(int i = 0; i < this.size(); i++)
         {
             Section currSection = this.get(i);
-            if(currSection.contains((student)))
+            if(currSection.getRoster().contains((student)))
             {
                 //if student is in section, increase the number of credits
                 creditCount += currSection.getCourse().getCreditHours();
@@ -162,7 +162,7 @@ public class Schedule extends List<Section>
             if(currSection.getPeriod().equals(section.getPeriod())) //if period matches
             {
                 //check if student is in roster
-                if(currSection.contains(student)) return true;
+                if(currSection.getRoster().contains(student)) return true;
             }
         }
         return false;
@@ -220,7 +220,7 @@ public class Schedule extends List<Section>
             {
                 Course newCourse = this.get(i).getCourse();
 
-                if(this.get(i).contains(student)) return true;
+                if(this.get(i).getRoster().contains(student)) return true;
             }
         }
         return false;
