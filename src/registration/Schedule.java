@@ -108,7 +108,7 @@ public class Schedule
      */
     public void enroll(Section section, Student student) throws Exception {
         try{
-            if(checkCreditCount(student) + section.getCourse().getCreditHours() > 18) {
+            if(checkCreditCount(student) + section.getCourse().getCreditHours() > 20) {
                 throw new Exception("Cannot enroll [" + student.getProfile().getFname() + " " + student.getProfile().getLname() + " " + student.getProfile().getDob() +
                         "]; " + "now has " + checkCreditCount(student) + " will exceed credit limit of 18"); //if max credits exceeded
             }
