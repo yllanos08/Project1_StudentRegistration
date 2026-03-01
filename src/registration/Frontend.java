@@ -435,8 +435,8 @@ public class Frontend {
         // if any section in our schedule matches PERIOD + COURSE then return false.
         Course c = Course.valueOf(courseString.toUpperCase());
         Time p = getPeriod(period);
-        for(int i = 0; i < schedule.getNumSections(); i++){
-            Section section = schedule.getSections()[i];
+        for(int i = 0; i < schedule.size(); i++){
+            Section section = schedule.get(i);
             if(section.getPeriod().equals(p) && section.getCourse().equals(c)) return false;
         }
         return true;
@@ -478,8 +478,8 @@ public class Frontend {
                 + instructor.substring(1).toLowerCase();
         Instructor i = Instructor.valueOf(formattedName);
         Time p = getPeriod(period);
-        for(int j = 0; j < schedule.getNumSections(); j++){
-            Section section = schedule.getSections()[j];
+        for(int j = 0; j < schedule.size(); j++){
+            Section section = schedule.get(j);
             if(section.getInstructor().equals(i) && section.getPeriod().equals(p)) return false;
         }
         return true;
@@ -509,8 +509,8 @@ public class Frontend {
         //look through all the sections
         //if another section uses the classroom at same period then return false
 
-        for(int i = 0; i < schedule.getNumSections(); i++){
-            Section section = schedule.getSections()[i];
+        for(int i = 0; i < schedule.size(); i++){
+            Section section = schedule.get(i);
             if(section.getClassroom().equals(c) && section.getPeriod().equals(p)) return false;
         }
         return true;
@@ -539,13 +539,12 @@ public class Frontend {
     private Section findSection(String courseString, int periodInt, Schedule schedule) throws Exception{
         Course course = Course.valueOf(courseString.toUpperCase());
         Time period = getPeriod(periodInt);
-        Section[] sections = schedule.getSections();
         Section section;
         //getting section if it exists
-        for(int i = 0; i < schedule.getNumSections(); i++) //loop through sections
+        for(int i = 0; i < schedule.size(); i++) //loop through sections
         {
-            if(sections[i].getCourse().equals(course) && sections[i].getPeriod().equals(period)){
-                section = sections[i];
+            if(schedule.get(i).getCourse().equals(course) && schedule.get(i).getPeriod().equals(period)){
+                section = schedule.get(i);
                 return section;
             }
         }

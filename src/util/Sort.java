@@ -1,10 +1,12 @@
 package util;
 
+import registration.Section;
+
 public class Sort {
 
 
     /**
-
+    Standard selection sort on generic list
      * @param list
      * @param <E>
      */
@@ -25,6 +27,64 @@ public class Sort {
             list.set(minIndex, list.get(i));
             list.set(i, temp);
 
+        }
+    }
+
+
+    /**
+     Sorts list by campus then building using a selection sort algorithm.
+     * @param list list to be sorted.
+     */
+    public static void locSort(List <Section> list) {
+        //selection sort
+        for (int i = 0; i < list.size(); i++) {
+            int swapIndex = i;
+            Section smallestSection = list.get(i);
+            for (int j = i + 1; j < list.size(); j++) {
+
+                int campusCompare = smallestSection.getClassroom().getCampus().compareTo(list.get(j).getClassroom().getCampus());
+                if (campusCompare > 0) {
+                    swapIndex = j;
+                    smallestSection = list.get(j);
+                }
+                if (campusCompare == 0) {
+                    //check building
+                    if (smallestSection.getClassroom().getBuilding().compareTo(list.get(j).getClassroom().getBuilding()) > 0) {
+                        swapIndex = j;
+                        smallestSection = list.get(j);
+
+                    }
+                }
+            }
+            Section temp = list.get(i);
+            list.set(i, list.get(swapIndex));
+            list.set(swapIndex, temp);
+
+        }
+    }
+
+    /**
+        Sorts list by course number, then period. Uses a selection sort algorithm.
+     * @param list list to be sorted.
+     */
+    public static void courseSort(List <Section> list)
+    {
+        //selection sort by course#, then period
+        for(int i = 0; i < list.size(); i++)
+        {
+            int swapIndex = i;
+
+            for(int j = i + 1; j < list.size(); j++) {
+                int courseCompare = list.get(j).getCourse().name().compareTo(list.get(swapIndex).getCourse().name());;
+
+                if (courseCompare < 0) swapIndex = j;
+                else if (courseCompare == 0) {
+                    if (list.get(j).getPeriod().compareTo(list.get(swapIndex).getPeriod()) < 0) swapIndex = j;
+                }
+            }
+            Section temp = list.get(i);
+            list.set(i, list.get(swapIndex));
+            list.set(swapIndex, temp);
         }
     }
 }

@@ -67,7 +67,7 @@ public class List <E> implements Iterable <E>{
      */
     public void add(E e)
     {
-        if(isFull()) this.grow();
+        if(this.size == this.objects.length) this.grow();
         objects[size++] = e;
     }
 
@@ -142,14 +142,6 @@ public class List <E> implements Iterable <E>{
         return find(e);
     }
 
-    /**
-     Determines if the list is full
-     * @return true if at max capacity; false otherwise
-     */
-    private boolean isFull()
-    {
-        return this.size == this.objects.length;
-    }
 
     /**
      Private inner class for the iterator to work properly.
