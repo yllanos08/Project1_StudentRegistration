@@ -33,21 +33,19 @@ public class International extends NonResident{
 
     /**
      * Tuition calc for international students;
-     * < 12 = parttime non resident
-     * > 12 ... IF studyabroad waive tuition ELSE include tuition
-     * > 12 always health insurance, and admin fee
+     * STUDY ABROAD DOES NOT PAY TUITION!
      * @param creditsEnrolled #of credits enrolled
      * @return double tuition value
      */
     @Override
     public double tuition(int creditsEnrolled){
         double finalTuition = 0;
-        if(creditsEnrolled < 12) finalTuition = super.tuition(creditsEnrolled);
-        else{
-            if(!isStudyAbroad) finalTuition = super.tuition(creditsEnrolled);
-            finalTuition += HEALTHINSURANCE_FEE;
-            finalTuition += ADMIN_FEE;
+        if(!isStudyAbroad) finalTuition = super.tuition(creditsEnrolled);
+        else {
+            finalTuition += FULLTIME_UNVERSITYFEE;
         }
+        finalTuition += ADMIN_FEE;
+        finalTuition += HEALTHINSURANCE_FEE;
         return finalTuition;
     }
 
