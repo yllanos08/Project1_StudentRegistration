@@ -1,5 +1,9 @@
 package registration;
 
+/**
+ Non-Resident class that extends Student class
+ @author Ysabella Llanos, Kevin Toan
+ */
 public class NonResident extends Student{
     private final int FULLTIME_TUITION = 35758;
     private final int PARTTIME_TUITION_PERCREDIT = 1162;

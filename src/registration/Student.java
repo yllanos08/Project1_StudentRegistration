@@ -29,23 +29,41 @@ public abstract class Student implements Comparable<Student> {
         this.creditsCompleted = creditsCompleted;
     }
     /*
-    Default constructor
-     */
-    public Student(){}
-
-    /*
     Getters & Setters
      */
-    public void setProfile(Profile profile){this.profile = profile;}
-    public void setMajor(Major major){this.major = major;}
-    public void setCreditsCompleted(int creditsCompleted){this.creditsCompleted = creditsCompleted;}
 
+    /**
+     Set profile using parameter
+     * @param profile profile information being set
+     */
+    public void setProfile(Profile profile){this.profile = profile;}
+
+    /**
+     Set major using parameter
+     * @param major major information being set
+     */
+    public void setMajor(Major major){this.major = major;}
+
+    /**
+     Get profile from student
+     * @return student's profile
+     */
     public Profile getProfile(){
         return profile;
     }
+
+    /**
+     Get major from student
+     * @return student's major
+     */
     public Major getMajor(){
         return major;
     }
+
+    /**
+     Get the # of credits completed by student
+     * @return number of credits completed by student
+     */
     public int getCreditsCompleted(){
         return creditsCompleted;
     }
