@@ -13,6 +13,12 @@ public class NonResident extends Student{
      * @return String "NonResident"
      */
     public String getType(){return "[NonResident]";}
+
+    /**
+     * Caluclates tuition only accounts for tuition + university fee
+     * @param creditsEnrolled # of credits enrolled
+     * @return double tuition calculated
+     */
     @Override
     public double tuition(int creditsEnrolled) {
         double finalTuition = 0;

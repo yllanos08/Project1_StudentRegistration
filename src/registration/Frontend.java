@@ -365,7 +365,6 @@ public class Frontend {
             case PRINTSECTIONSBYCODE_CMD -> schedule.printByCourse();
             case PRINTBYTUITION_CMD -> printTuition();
             case PRINTBYGRAD_CMD -> printGraduates();
-
         }
     }
     /*
