@@ -396,31 +396,39 @@ public class Frontend {
         System.out.println("* Tuition dues ordered by student. *");
         for(int i = 0; i < studentList.size(); i++)
         {
+            boolean enrolled = false;
             Student student = studentList.get(i);
             int credits = getCurrCredits(student);
 
             //header
             System.out.println(student.getProfile().toString() + student.getType());
-            //loop thru entire schedule, print course if student is in roster
-            //use this to calculate total credits + tuition
+
             for(int j = 0; j < schedule.size(); j++)
             {
                 Section section = schedule.get(j);
                 if(section.getRoster().contains(student))
                 {
+                    enrolled = true;
                     System.out.println("\t" + section.getCourse() + "[" + section.getPeriod().getStart() + "] " +
                                         "[" + "credit: " + section.getCourse().getCreditHours() + "]");
                 }
             }
-            double tuition = student.tuition(credits);
-            DecimalFormat df = new DecimalFormat("$#,##0.00");
-            String formattedTuition = df.format(tuition);
-            if(student instanceof International && credits < 12 && !((International) student).isAbroad())
+            //if we make it here and enrolled is not true then they are in no classes
+            if(!enrolled && !(student instanceof International))
             {
-                System.out.println("\t" + "**International student must enroll at least 12 credits.");
+                System.out.println("\t" + "**not enrolled");
             }
             else {
-                System.out.println("\t" + "**Total credits enrolled: " + credits + " [tuition due: " + formattedTuition + "]");
+                double tuition = student.tuition(credits);
+                DecimalFormat df = new DecimalFormat("$#,##0.00");
+                String formattedTuition = df.format(tuition);
+                if(student instanceof International && credits < 12 && !((International) student).isAbroad())
+                {
+                    System.out.println("\t" + "**International student must enroll at least 12 credits.");
+                }
+                else {
+                    System.out.println("\t" + "**Total credits enrolled: " + credits + " [tuition due: " + formattedTuition + "]");
+                }
             }
         }
 
