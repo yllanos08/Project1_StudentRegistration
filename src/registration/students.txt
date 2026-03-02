@@ -1,0 +1,21 @@
+R John Doe 1/2/2007 ECE 20
+R John Doe 3/20/2007 ECE 90 
+R John Doe 12/20/2004 ECE 65 
+R John Doe 4/3/2003  CS 116
+R John Doe 4/3/2003  CS 116
+I John Doe 1/20/2003  bait 60 false
+I John Doe 1/20/2003  bait 60 false
+I john doe 1/20/2003  bait 60 false
+N Jane Doe 5/1/1996  CS 30
+N Jane Doe 5/1/1996  CS 30
+N April March 3/31/2000  BAIT 109
+N Mary Lindsey 12/1/2001  BAIT 89
+T Roy Brooks 8/8/1999  math 111 NY
+T Roy Brooks 9/9/1999  iti 100 CT
+I Kate Lindsey 7/15/2002  ITI 59 false
+I Kate Lindsey 7/15/2002  ITI 59  false
+I Carl Brown 10/7/2004  cs 75 false
+T Paul Siegel 5/1/2000  CS 90 CT
+I Nathan Lin 12/12/2003 CS 89 false
+I Bill Scanlan 5/1/1999 CS 120 false
+I May Liang 6/30/2004 CS 0 true
