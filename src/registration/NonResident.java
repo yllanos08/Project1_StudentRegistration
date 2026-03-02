@@ -27,6 +27,7 @@ public class NonResident extends Student{
     public double tuition(int creditsEnrolled) {
         double finalTuition = 0;
         //part time student
+        if(creditsEnrolled < 1){ return finalTuition;}
         if(creditsEnrolled < 12){
             finalTuition += creditsEnrolled * PARTTIME_TUITION_PERCREDIT;
             finalTuition += PARTTIME_UNIVERSITYFEE;
