@@ -1,9 +1,5 @@
 package registration;
 
-/**
- Student that is in TriState area (NY, CT)
- @author Ysabella Llanos, Kevin Toan
- */
 public class TriState extends NonResident{
     private String state;
     private final double NY_DISCOUNT = 4000;

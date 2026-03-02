@@ -81,6 +81,7 @@ public class Resident extends Student{
     @Override
     public double tuition(int creditsEnrolled) {
         double finalTuition = 0;
+        if(creditsEnrolled < 1) return finalTuition;
         //part time student
         if(creditsEnrolled < 12){
             finalTuition += creditsEnrolled * PARTTIME_TUITION_PERCREDIT;
