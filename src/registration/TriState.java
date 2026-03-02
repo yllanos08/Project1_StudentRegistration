@@ -1,9 +1,11 @@
 package registration;
 
+
 public class TriState extends NonResident{
     private String state;
     private final double NY_DISCOUNT = 4000;
     private final double CT_DISCOUNT = 5000;
+
     TriState(Profile profile, Major major, int creditsCompleted, String state) throws Exception {
         super(profile, major, creditsCompleted);
         if(!state.equalsIgnoreCase("NY") && !state.equalsIgnoreCase("CT"))
@@ -26,7 +28,7 @@ public class TriState extends NonResident{
     @Override
     public double tuition(int creditsEnrolled){
         double finalTuition = super.tuition(creditsEnrolled);
-        if(creditsEnrolled > 12){
+        if(creditsEnrolled >= 12){
             if(state.equalsIgnoreCase("NY")) finalTuition -= NY_DISCOUNT;
             else finalTuition -= CT_DISCOUNT;
         }

@@ -5,7 +5,7 @@ package registration;
  @author Kevin Toan, Ysabella Llanos
  */
 
-public class RunProject1 {
+public class RunProject2 {
     public static void main(String[] args){
         new Frontend().run();
     }

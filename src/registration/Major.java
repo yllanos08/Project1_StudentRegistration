@@ -17,6 +17,12 @@ public enum Major {
         return this.school;
     }
 
+    /**
+     * Converts String to Major enum
+     * @param majorString major that you want
+     * @return Major obj of String
+     * @throws Exception if Major does not exist
+     */
     public static Major fromString(String majorString) throws Exception{
         try{
             return Major.valueOf(majorString.toUpperCase());
