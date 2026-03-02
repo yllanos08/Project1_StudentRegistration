@@ -1,6 +1,8 @@
 package util;
 
 import registration.Section;
+import registration.StudentList;
+import registration.Student;
 
 public class Sort {
 
@@ -85,6 +87,32 @@ public class Sort {
             Section temp = list.get(i);
             list.set(i, list.get(swapIndex));
             list.set(swapIndex, temp);
+        }
+    }
+
+    /**
+     Sorts list by major
+     * @param list list to be sorted
+     */
+    public static void majorSort(StudentList list)
+    {
+        for(int i = 0 ; i < list.size(); i++)
+        {
+            int minIndex = i;
+            for(int j = i + 1; j < list.size(); j++)
+            {
+                Student student = list.get(j);
+                Student min = list.get(minIndex);
+
+                if(student.getMajor().name().compareTo(min.getMajor().name()) < 0)
+                {
+                    //curr student comes before our min
+                    minIndex = j;
+                }
+            }
+            Student temp = list.get(i);
+            list.set(i, list.get(minIndex));
+            list.set(minIndex, temp);
         }
     }
 }

@@ -5,7 +5,7 @@ package registration;
  * @author Kevin Toan, Ysabella Llanos
  */
 
-abstract class Student implements Comparable<Student> {
+public abstract class Student implements Comparable<Student> {
     private Profile profile;
     private Major major;
     private int creditsCompleted;
@@ -78,7 +78,7 @@ abstract class Student implements Comparable<Student> {
 
     /**
      * makes student obj into str
-     * format: profile + major + creditscompleted
+     * format: profile + major + creditscompleted + Type
      * @return string
      */
     @Override

@@ -159,7 +159,7 @@ public class Frontend {
 
     /**
      * sets scholarship for a student
-     * @param input
+     * @param input student first name, last name, dob, and scholarship amount
      */
     private void setSCHOLARSHIP_CMD(String input){
         try
@@ -434,7 +434,24 @@ public class Frontend {
      */
     private void printGraduates()
     {
-
+        if(studentList.isEmpty())
+        {
+            System.out.println("Student list is empty.");
+            return;
+        }
+        //sort by major
+        Sort.majorSort(studentList);
+        System.out.println("* List of students eligible for graduation, ordered by major *");
+        //print if curr credits + credits completed are > 119
+        for(int i = 0; i < studentList.size(); i++)
+        {
+            Student currStudent = studentList.get(i);
+            if(getCurrCredits(currStudent) + currStudent.getCreditsCompleted() > 119)
+            {
+                System.out.println(currStudent.getProfile().toString() + "[" + currStudent.getMajor() + "," + currStudent.getMajor().getSchool() + "]");
+            }
+        }
+        System.out.println("* end of list *");
     }
     /**
      * Parses a line of data from students.txt
