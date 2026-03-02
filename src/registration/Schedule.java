@@ -43,7 +43,11 @@ public class Schedule extends List<Section>
         try{
             if(checkCreditCount(student) + section.getCourse().getCreditHours() > 20) {
                 throw new Exception("Cannot enroll [" + student.getProfile().getFname() + " " + student.getProfile().getLname() + " " + student.getProfile().getDob() +
-                        "]; " + "now has " + checkCreditCount(student) + " will exceed credit limit of 18"); //if max credits exceeded
+                        "]; " + "now has " + checkCreditCount(student) + " will exceed credit limit of 20"); //if max credits exceeded
+            }
+            if(student instanceof International && ((International) student).isAbroad() && (checkCreditCount(student) + section.getCourse().getCreditHours() > 12))
+            {
+                throw new Exception("International student study abroad cannot enroll more than 12 credits.");
             }
             if(duplicateCourse(section, student)){
                 throw new Exception("[" + student.getProfile().getFname() + " " + student.getProfile().getLname() + " " + student.getProfile().getDob() +  "]"
@@ -55,6 +59,8 @@ public class Schedule extends List<Section>
                 throw new Exception("Time conflict: " + "[" + student.getProfile().getFname() + " " + student.getProfile().getLname() + " " + student.getProfile().getDob() +  "]"
                         + "enrolled in another class at period " + periodInt);
             }
+
+
 
             //metPrereq will throw its own exception
             metPrereq(section, student);

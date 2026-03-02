@@ -8,6 +8,8 @@ public class International extends NonResident{
         this.isStudyAbroad = isStudyAbroad;
     }
 
+    public boolean isAbroad(){return isStudyAbroad;}
+
     /**
      * Overrides parent getType, returns type of student
      * @return String "International"
