@@ -16,6 +16,7 @@ abstract class Student implements Comparable<Student> {
     protected final double FULLTIME_UNVERSITYFEE = 3891;
     protected final double PARTTIME_UNIVERSITYFEE = FULLTIME_UNVERSITYFEE/2;
     public abstract double tuition(int creditsEnrolled);
+    public abstract String getType();
     /**
      Parameterized Constructor
      * @param profile

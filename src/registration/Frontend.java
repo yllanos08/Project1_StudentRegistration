@@ -11,7 +11,12 @@ import java.util.Calendar;
  */
 
 public class Frontend {
-    final String ADD_CMD = "A";
+    final String ADD_RESIDENT_CMD = "AR";
+    final String ADD_NONRESIDENT_CMD = "AN";
+    final String ADD_TRISTATE_CMD = "AT";
+    final String ADD_INTERNATIONAL_CMD = "AI";
+    final String LOAD_CMD = "L";
+    final String SCHOLARSHIP_CMD = "S";
     final String REMOVE_CMD = "R";
     final String OFFER_CMD = "O";
     final String CLOSE_CMD = "C";
@@ -20,6 +25,8 @@ public class Frontend {
     final String PRINTSTUDENTS_CMD = "PS";
     final String PRINTSECTIONSBYLOCATION_CMD = "PL";
     final String PRINTSECTIONSBYCODE_CMD = "PC";
+    final String PRINTBYTUITION_CMD = "PT";
+    final String PRINTBYGRAD_CMD = "PG";
     final String STOP_CMD = "Q";
 
 
@@ -47,7 +54,9 @@ public class Frontend {
                 String inputCmd = inputParts[0];
                 String inputParam = (inputParts.length > 1) ? inputParts[1] : "";
                 switch(inputCmd){
-                    case ADD_CMD -> setADD_CMD(inputParam);
+                    case ADD_RESIDENT_CMD, ADD_NONRESIDENT_CMD, ADD_TRISTATE_CMD, ADD_INTERNATIONAL_CMD -> setADD_CMD(input);
+                    case LOAD_CMD -> setLOAD_CMD(inputParam);
+                    case SCHOLARSHIP_CMD -> setSCHOLARSHIP_CMD(inputParam);
                     case REMOVE_CMD -> setREMOVE_CMD(inputParam);
                     case OFFER_CMD -> setOFFER_CMD(inputParam);
                     case CLOSE_CMD -> setCLOSE_CMD(inputParam);
@@ -69,34 +78,76 @@ public class Frontend {
  */
     /**
      * Adds student to list of valid students
-     * @param input student first name, student last name, MM/DD/YYYY, Major, Completed Credits
+     * @param input specific Add cmd, student first name, student last name, MM/DD/YYYY, Major, Completed Credits
+     *              (OPTIONAL) State, (OPTIONAL) isStudyAbroad
      */
     private void setADD_CMD(String input)
     {
         try{
-            Student addedStudent = new Student();
-            String majorString = makeStudent(input, addedStudent);
-            if(!isValidMajor(majorString)) throw new Exception("INVALID: " + majorString + " major does not exist!");
+            StringTokenizer tokenizer = new StringTokenizer(input);
+            String cmd = tokenizer.nextToken();
+            int remainingTokens = tokenizer.countTokens();
+            // 1. Validate Parameter Count FIRST
+            if (cmd.equals(ADD_RESIDENT_CMD) || cmd.equals(ADD_NONRESIDENT_CMD)) {
+                if (remainingTokens < 5) throw new Exception("Missing data tokens.(AR & AN)");
+            } else if (cmd.equals(ADD_TRISTATE_CMD) || cmd.equals(ADD_INTERNATIONAL_CMD)) {
+                if (remainingTokens < 6) throw new Exception("Missing data tokens.(AT & AI)");
+            }
+            Profile profile = profileParser(tokenizer);
+            String majorString = tokenizer.nextToken();
+            Major major = Major.fromString(majorString);
 
-            Date dob = addedStudent.getProfile().getDob();
-            validateDOB(dob);
-
-            int creditsCompleted = addedStudent.getCreditsCompleted();
-            if(studentList.contains(addedStudent)) throw new Exception("[" + addedStudent.getProfile().getFname() + " " + addedStudent.getProfile().getLname() + " "
-                    + dob + "]" +
+            String creditString = tokenizer.nextToken();
+            int creditsCompleted;
+            try{
+                creditsCompleted = Integer.parseInt(creditString);
+            }catch(NumberFormatException exception){
+                throw new Exception("INVALID: " + creditString + " is not a valid integer!");
+            }
+            //create student based on input
+            Student newStudent;
+            switch(cmd){
+                case ADD_RESIDENT_CMD -> newStudent = new Resident(profile, major, creditsCompleted);
+                case ADD_NONRESIDENT_CMD -> newStudent = new NonResident(profile, major, creditsCompleted);
+                case ADD_TRISTATE_CMD -> {
+                    String state = tokenizer.nextToken();
+                    newStudent = new TriState(profile, major, creditsCompleted,state);
+                }
+                case ADD_INTERNATIONAL_CMD -> {
+                    boolean isStudyAbroad = Boolean.parseBoolean(tokenizer.nextToken());
+                    newStudent = new International(profile, major, creditsCompleted,isStudyAbroad);
+                }
+                //this default should never be hit anyways
+                default -> throw new Exception("INVALID COMMAND");
+            }
+            //checks
+            if(studentList.contains(newStudent)) throw new Exception(newStudent.getProfile().toString() +
                     " " + "student is already in the list");
-            if(creditsCompleted < 0) throw new Exception(creditsCompleted  + " " + "credit is negative!");
+            if(creditsCompleted < 0) throw new Exception("INVALID: " + creditsCompleted + " credit is negative!");
 
-            studentList.add(addedStudent);
-            System.out.println("[" + addedStudent.getProfile().getFname() + " " + addedStudent.getProfile().getLname() + " "
-                        + dob + "]" +
-                        " " + "added to the list");
-
-        }catch (Exception exception){
+            studentList.add(newStudent);
+            System.out.println(newStudent.getProfile().toString() + " " + "[" + newStudent.getType() +  "added to the list");
+        }
+        catch (Exception exception){
             System.out.println(exception.getMessage());
         }
     }
 
+    /**
+     * Loads a .txt file and executes all commands
+     * @param input txt file list of students to be added
+     */
+    private void setLOAD_CMD(String input){
+        System.out.println("loading!");
+    }
+
+    /**
+     * sets scholarship for a student
+     * @param input
+     */
+    private void setSCHOLARSHIP_CMD(String input){
+        System.out.println("adding scholarship");
+    }
     /**
      * Removes student from valid list of students
      * if student doesnt exist doesnt do anything
@@ -251,6 +302,18 @@ public class Frontend {
         }
     }
 
+    /**
+     Print out information based on input (either studentList or schedule ordered by location or course)
+     * @param input Specifies what information to print and how it is ordered
+     */
+    private void setPRINT_CMD(String input)
+    {
+        switch(input){
+            case PRINTSTUDENTS_CMD -> studentList.print();
+            case PRINTSECTIONSBYLOCATION_CMD -> schedule.printByClassroom();
+            case PRINTSECTIONSBYCODE_CMD -> schedule.printByCourse();
+        }
+    }
     /*
 ===========================================================
                   END of Main Functions
@@ -264,20 +327,32 @@ public class Frontend {
                   Start of HELPER Functions
 ===========================================================
  */
+
     /**
-     Print out information based on input (either studentList or schedule ordered by location or course)
-     * @param input Specifies what information to print and how it is ordered
+     * Parses through input and creates a new Profile object
+     * @param tokenizer input to be tokenized
+     * @throws Exception if parameters are incorrect
+     * @return new profile
      */
-    private void setPRINT_CMD(String input)
-    {
-        switch(input){
-            case PRINTSTUDENTS_CMD -> studentList.print();
-            case PRINTSECTIONSBYLOCATION_CMD -> schedule.printByClassroom();
-            case PRINTSECTIONSBYCODE_CMD -> schedule.printByCourse();
+    private Profile profileParser(StringTokenizer tokenizer) throws Exception{
+
+        String fname = tokenizer.nextToken();
+        String lname = tokenizer.nextToken();
+
+        StringTokenizer dobToken = new StringTokenizer(tokenizer.nextToken());
+        int month,day,year;
+        try{
+            month = Integer.parseInt(dobToken.nextToken("/"));
+            day = Integer.parseInt(dobToken.nextToken("/"));
+            year = Integer.parseInt(dobToken.nextToken("/"));
+        }catch(NumberFormatException exception){
+            throw new Exception("INVALID: " + dobToken + " is not an integer!");
         }
+
+        Date dob = new Date(year,month,day);
+        validateDOB(dob);
+        return new Profile(fname, lname, dob);
     }
-
-
     /**
      * Throws exception if DOB is valid
       * @param dob date of birth to be checked
@@ -388,41 +463,41 @@ public class Frontend {
         }
         throw new Exception("INVALID: [" + fname + " " + lname + " " + dobString +  "]" + " does not exist.");
     }
-    /**
-     Fill student attributes using input
-     * @param input input provided
-     * @param student student to be made/finished
-     */
-    private static String makeStudent(String input, Student student)
-    {
-        StringTokenizer s =  new StringTokenizer(input);
-        String fname = s.nextToken();
-        String lname = s.nextToken();
-        String dobString = s.nextToken();
-        String majorString = s.nextToken().toUpperCase();
-        int creditsCompleted = Integer.parseInt(s.nextToken());
-        //check and make major
-        Major major;
-        if(isValidMajor(majorString))
-        {
-            major = Major.valueOf(majorString);
-        }
-        else return majorString;
-
-        StringTokenizer dobToken = new StringTokenizer(dobString);
-        int month = Integer.parseInt(dobToken.nextToken("/"));
-        int day = Integer.parseInt(dobToken.nextToken("/"));
-        int year = Integer.parseInt(dobToken.nextToken("/"));
-
-        Date dob = new Date(year, month, day);
-
-        Profile addedProfile = new Profile (fname, lname, dob);
-
-        student.setProfile(addedProfile);
-        student.setMajor(major);
-        student.setCreditsCompleted(creditsCompleted);
-        return majorString;
-    }
+//    /**
+//     Fill student attributes using input
+//     * @param input input provided
+//     * @param student student to be made/finished
+//     */
+//    private static String makeStudent(String input, Student student) throws Exception
+//    {
+//        StringTokenizer s =  new StringTokenizer(input);
+//        String fname = s.nextToken();
+//        String lname = s.nextToken();
+//        String dobString = s.nextToken();
+//        String majorString = s.nextToken().toUpperCase();
+//        int creditsCompleted = Integer.parseInt(s.nextToken());
+//        //check and make major
+//        Major major;
+//        if(isValidMajor(majorString))
+//        {
+//            major = Major.fromString(majorString);
+//        }
+//        else return majorString;
+//
+//        StringTokenizer dobToken = new StringTokenizer(dobString);
+//        int month = Integer.parseInt(dobToken.nextToken("/"));
+//        int day = Integer.parseInt(dobToken.nextToken("/"));
+//        int year = Integer.parseInt(dobToken.nextToken("/"));
+//
+//        Date dob = new Date(year, month, day);
+//
+//        Profile addedProfile = new Profile (fname, lname, dob);
+//
+//        student.setProfile(addedProfile);
+//        student.setMajor(major);
+//        student.setCreditsCompleted(creditsCompleted);
+//        return majorString;
+//    }
 
     /**
      * Checks if a given course is valid for the period given
@@ -431,8 +506,6 @@ public class Frontend {
      * @return T if time slot is open, F if time slot is closed
      */
     private boolean isValidPeriodTime(String courseString, int period){
-        // look through all sections in our schedule
-        // if any section in our schedule matches PERIOD + COURSE then return false.
         Course c = Course.valueOf(courseString.toUpperCase());
         Time p = getPeriod(period);
         for(int i = 0; i < schedule.size(); i++){
@@ -516,17 +589,17 @@ public class Frontend {
         return true;
     }
 
-    /**
-     * Is the student valid, ie does makestudent student
-     * @param student student to be checked
-     * @return T if valid, F if false
-     */
-    private boolean isValidStudent(String student){
-        Student currStudent = new Student();
-        makeStudent(student,currStudent);
-        if(currStudent.getSchoolYear().isEmpty())return false;
-        return true;
-    }
+//    /**
+//     * Is the student valid, ie does makestudent student
+//     * @param student student to be checked
+//     * @return T if valid, F if false
+//     */
+//    private boolean isValidStudent(String student){
+//        Student currStudent = new Student();
+//        makeStudent(student,currStudent);
+//        if(currStudent.getSchoolYear().isEmpty())return false;
+//        return true;
+//    }
 
     /**
      * Finds section if it exists

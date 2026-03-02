@@ -4,6 +4,15 @@ public class NonResident extends Student{
     private final int FULLTIME_TUITION = 35758;
     private final int PARTTIME_TUITION_PERCREDIT = 1162;
 
+    NonResident(Profile profile, Major major, int creditsCompleted){
+        super(profile, major, creditsCompleted);
+    }
+
+    /**
+     * Get type of student
+     * @return String "NonResident"
+     */
+    public String getType(){return "NonResident";}
     @Override
     public double tuition(int creditsEnrolled) {
         double finalTuition = 0;

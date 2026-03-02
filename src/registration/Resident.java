@@ -9,21 +9,48 @@ public class Resident extends Student{
     final private double FULLTIME_TUITION = 14933;
     final private double PARTTIME_TUITION_PERCREDIT = 482;
 
+    /**
+     * Constructor w/ all values
+     * @param profile profile of student
+     * @param major major of student
+     * @param creditsCompleted # of credits completed
+     * @param scholarship scholarship $ they have
+     */
     Resident(Profile profile,Major major, int creditsCompleted, int scholarship){
         super(profile,major, creditsCompleted);
         this.scholarship = scholarship;
     }
+
+    /**
+     * Default constructor
+     * @param profile profile of student
+     * @param major major of student
+     * @param creditsCompleted # of credits completed
+     */
+    Resident(Profile profile, Major major, int creditsCompleted){
+        super(profile, major, creditsCompleted);
+        this.scholarship = 0;
+    }
+
+    /**
+     * Getter for scholarship
+     * @return int of current scholarship $
+     */
     int getScholarship(){ return scholarship; }
 
+    /**
+     * Getter for Type of Student
+     * @return String "Resident"
+     */
+    public String getType(){return "Resident";}
     /**
      * Add scholarship to this resident
      * @param scholarship amount wanted to add
      * @throws Exception total scholarship cannot > 10,000.
      */
-    void addScholarship(int scholarship) throws Exception {
-        int newScholarship = this.scholarship + scholarship;
-        if(newScholarship > 10000) throw new Exception("Scholarship cannot exceed 10000");
-        this.scholarship = newScholarship;
+    void setScholarship(int scholarship) throws Exception {
+        if(scholarship > 10000) throw new Exception("Scholarship cannot exceed 10000");
+        this.scholarship = scholarship;
     }
 
 

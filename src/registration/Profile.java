@@ -68,12 +68,12 @@ public class Profile implements Comparable<Profile> {
 
     /**
      Return a string including all values
-     * @return a textual representation of the object
+     * @return "[lname fname DOB]"
      */
     @Override
     public String toString()
     {
-        return lname + ", " + fname + ", " + dob;
+        return "[" + lname + " " + fname + " " + dob + "]";
     }
 
     /**
