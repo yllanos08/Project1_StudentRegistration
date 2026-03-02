@@ -100,7 +100,9 @@ public class Section {
         if(obj instanceof Section){
             Section s = (Section) obj;
             return this.time.getStart().equals(s.time.getStart()) &&
-                    this.course.getMajorPrereq().equals(s.course.getMajorPrereq());
+                    this.course.getMajorPrereq().equals(s.course.getMajorPrereq()) &&
+                    this.instructor.equals(s.instructor) &&
+                    this.classroom.equals(s.classroom);
         }
         return false;
     }

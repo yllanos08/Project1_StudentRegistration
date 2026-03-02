@@ -1,5 +1,6 @@
 package registration;
 import util.Date;
+import util.Sort;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
@@ -63,7 +64,7 @@ public class Frontend {
                     case CLOSE_CMD -> setCLOSE_CMD(inputParam);
                     case ENROLL_CMD -> setENROLL_CMD(inputParam);
                     case DROP_CMD -> setDROP_CMD(inputParam);
-                    case PRINTSTUDENTS_CMD, PRINTSECTIONSBYLOCATION_CMD, PRINTSECTIONSBYCODE_CMD -> setPRINT_CMD(inputCmd);
+                    case PRINTSTUDENTS_CMD, PRINTSECTIONSBYLOCATION_CMD, PRINTSECTIONSBYCODE_CMD, PRINTBYTUITION_CMD, PRINTBYGRAD_CMD -> setPRINT_CMD(inputCmd);
                     case STOP_CMD -> active = false;
                     default -> System.out.println(inputCmd + " is an invalid command!");
                 }
@@ -362,6 +363,9 @@ public class Frontend {
             case PRINTSTUDENTS_CMD -> studentList.print();
             case PRINTSECTIONSBYLOCATION_CMD -> schedule.printByClassroom();
             case PRINTSECTIONSBYCODE_CMD -> schedule.printByCourse();
+            case PRINTBYTUITION_CMD -> printTuition();
+            case PRINTBYGRAD_CMD -> printGraduates();
+
         }
     }
     /*
@@ -378,6 +382,60 @@ public class Frontend {
 ===========================================================
  */
 
+    /**
+        Print tuition dues of each student ordered by profile
+     */
+    private void printTuition()
+    {
+        if(studentList.isEmpty())
+        {
+            System.out.println("Student list is empty.");
+            return;
+        }
+
+        Sort.selSort(studentList); //sort by profile
+        System.out.println("* Tuition dues ordered by student. *");
+        for(int i = 0; i < studentList.size(); i++)
+        {
+            Student student = studentList.get(i);
+            int credits = getCurrCredits(student);
+
+            //header
+            System.out.println(student.getProfile().toString() + student.getType());
+            //loop thru entire schedule, print course if student is in roster
+            //use this to calculate total credits + tuition
+            for(int j = 0; j < schedule.size(); j++)
+            {
+                Section section = schedule.get(j);
+                if(section.getRoster().contains(student))
+                {
+                    System.out.println("\t" + section.getCourse() + "[" + section.getPeriod().getStart() + "] " +
+                                        "[" + "credit: " + section.getCourse().getCreditHours() + "]");
+                }
+            }
+            double tuition = student.tuition(credits);
+            DecimalFormat df = new DecimalFormat("$#,##0.00");
+            String formattedTuition = df.format(tuition);
+            if(student instanceof International && credits < 12)
+            {
+                System.out.println("\t" + "**International student must enroll at least 12 credits.");
+            }
+            else {
+                System.out.println("\t" + "**Total credits enrolled: " + credits + " [tuition due: " + formattedTuition + "]");
+            }
+        }
+
+        System.out.println("* end of list **");
+
+    }
+
+    /**
+        Print students that are meeting the 120-credit graduation requirement, ordered by major.
+     */
+    private void printGraduates()
+    {
+
+    }
     /**
      * Parses a line of data from students.txt
      * @param rawLine raw line of data
