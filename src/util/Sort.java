@@ -4,6 +4,11 @@ import registration.Section;
 import registration.StudentList;
 import registration.Student;
 
+
+/**
+ Sorting util class. Holds generic selection sort and specialized sorts (ordered my course, location, etc.)
+ @author Ysabella Llanos, Kevin Toan
+ */
 public class Sort {
 
 
