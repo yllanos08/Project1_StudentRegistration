@@ -12,7 +12,7 @@ public class NonResident extends Student{
      * Get type of student
      * @return String "NonResident"
      */
-    public String getType(){return "NonResident";}
+    public String getType(){return "[NonResident]";}
     @Override
     public double tuition(int creditsEnrolled) {
         double finalTuition = 0;

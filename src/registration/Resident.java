@@ -42,7 +42,7 @@ public class Resident extends Student{
      * Getter for Type of Student
      * @return String "Resident"
      */
-    public String getType(){return "Resident";}
+    public String getType(){return "[Resident]";}
     /**
      * Add scholarship to this resident
      * @param scholarship amount wanted to add

@@ -14,5 +14,5 @@ public class TriState extends NonResident{
      * @return String "Tristate: state"
      */
     @Override
-    public String getType(){return "Tristate: " + state;}
+    public String getType(){return "[Tristate: " + state + "]";}
 }

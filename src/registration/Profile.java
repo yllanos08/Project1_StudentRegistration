@@ -73,7 +73,7 @@ public class Profile implements Comparable<Profile> {
     @Override
     public String toString()
     {
-        return "[" + lname + " " + fname + " " + dob + "]";
+        return "[" + fname + " " + lname + " " + dob + "]";
     }
 
     /**

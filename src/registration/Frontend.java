@@ -1,6 +1,7 @@
 package registration;
 import util.Date;
-
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 import java.util.Calendar;
@@ -126,7 +127,7 @@ public class Frontend {
             if(creditsCompleted < 0) throw new Exception("INVALID: " + creditsCompleted + " credit is negative!");
 
             studentList.add(newStudent);
-            System.out.println(newStudent.getProfile().toString() + " " + "[" + newStudent.getType() +  "added to the list");
+            System.out.println(newStudent.getProfile().toString() + " " + newStudent.getType() + " added to the list");
         }
         catch (Exception exception){
             System.out.println(exception.getMessage());
@@ -138,8 +139,22 @@ public class Frontend {
      * @param input txt file list of students to be added
      */
     private void setLOAD_CMD(String input){
-        System.out.println("loading!");
+        File file = new File("students.txt");
+        try{
+            Scanner reader = new Scanner(file);
+            while(reader.hasNextLine()){
+                String rawLine = reader.nextLine().trim();
+                String fullCmd = parseStudentsTxt(rawLine);
+                setADD_CMD(fullCmd);
+            }
+        }catch(FileNotFoundException exception){
+            System.out.println("Invalid File.");
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+        System.out.println("Student list loaded from text file");
     }
+
 
     /**
      * sets scholarship for a student
@@ -328,6 +343,27 @@ public class Frontend {
 ===========================================================
  */
 
+    /**
+     * Parses a line of data from students.txt
+     * @param rawLine raw line of data
+     * @return fullCmd in format "A[X] fname lname DOB (extra parameters)"
+     * Where X is specific command based on .txt
+     * @throws Exception if line cmds are invalid
+     */
+    private static String parseStudentsTxt(String rawLine) throws Exception {
+        StringTokenizer line = new StringTokenizer(rawLine);
+        String type = line.nextToken();
+        String data = rawLine.substring(type.length()).trim();
+        String fullCmd = "";
+        switch(type){
+            case "R" -> fullCmd = "AR " + data;
+            case "I" -> fullCmd = "AI " + data;
+            case "N" -> fullCmd = "AN " + data;
+            case "T" -> fullCmd = "AT " + data;
+            default -> throw new Exception("Invalid line");
+        }
+        return fullCmd;
+    }
     /**
      * Parses through input and creates a new Profile object
      * @param tokenizer input to be tokenized

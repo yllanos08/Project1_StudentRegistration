@@ -13,5 +13,9 @@ public class International extends NonResident{
      * @return String "International"
      */
     @Override
-    public String getType(){ return "International";}
+    public String getType(){
+        if(isStudyAbroad) return "[International study abroad]";
+        else return "[International]";
+    }
+
 }
