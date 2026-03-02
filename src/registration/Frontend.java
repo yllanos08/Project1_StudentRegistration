@@ -416,7 +416,7 @@ public class Frontend {
             double tuition = student.tuition(credits);
             DecimalFormat df = new DecimalFormat("$#,##0.00");
             String formattedTuition = df.format(tuition);
-            if(student instanceof International && credits < 12)
+            if(student instanceof International && credits < 12 && !((International) student).isAbroad())
             {
                 System.out.println("\t" + "**International student must enroll at least 12 credits.");
             }

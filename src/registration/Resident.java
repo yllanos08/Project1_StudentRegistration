@@ -1,5 +1,7 @@
 package registration;
 
+import java.text.DecimalFormat;
+
 /**
  * Resident class that extends STUDENT class
  * @author Ysabella Llanos, Kevin Toan
@@ -55,6 +57,20 @@ public class Resident extends Student{
 
 
     /**
+     Specialized toString for residents with a scholarship
+     * @return Student toString + scholarship
+     */
+    @Override
+    public String toString()
+    {
+        DecimalFormat df = new DecimalFormat("$#,##0");
+        String formattedScholarship = df.format(this.scholarship);
+        if(this.scholarship > 0) return super.toString() + " [scholarship: " + formattedScholarship + "]";
+        return super.toString();
+    }
+
+
+    /**
      * Calculates tuition based on creditsEnrolled & tuition
      * 12+ = fulltime
      * <12 = part time
@@ -84,5 +100,7 @@ public class Resident extends Student{
         finalTuition -= scholarship;
         return finalTuition;
     }
+
+
 
 }

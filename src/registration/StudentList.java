@@ -29,7 +29,11 @@ public class StudentList extends List<Student>{
 
         System.out.println("* Student list ordered by last, first name, DOB *");
         for(int i = 0; i < this.size(); i++){
-            System.out.println(this.get(i));
+            //if resident use resident to string
+            Student currStudent = this.get(i);
+
+            if(currStudent instanceof Resident) System.out.println(((Resident)currStudent).toString());
+            else{System.out.println(currStudent);}
         }
         System.out.println("* end of list **");
     }
