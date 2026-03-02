@@ -85,7 +85,8 @@ abstract class Student implements Comparable<Student> {
     public String toString(){
         return "[" + profile.getFname() + " " + profile.getLname() + " " + profile.getDob() + "]" + " "
                 + "[" + major + "," + major.getSchool() + "]" + " "
-                + "credits earned: " + creditsCompleted + "[" + getSchoolYear() + "]";
+                + "credits earned: " + creditsCompleted + " [" + getSchoolYear() + "]"
+                + getType();
     }
 
     /**

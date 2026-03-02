@@ -207,6 +207,7 @@ public class Frontend {
         try{
             Student removeStudent = findStudent(input);
             studentList.remove(removeStudent);
+            System.out.println(removeStudent.getProfile().toString() + " removed from the list.");
         } catch (Exception exception) {
             System.out.println(exception.getMessage());
         }

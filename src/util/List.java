@@ -82,8 +82,8 @@ public class List <E> implements Iterable <E>{
         if(indexOfReplacee == NOT_FOUND) return; //exit if not found
         E lastObject = this.objects[size - 1];
 
-
-        this.objects[size--] = null;
+        size--;
+        this.objects[size] = null;
         this.objects[indexOfReplacee] = lastObject;
     }
 
