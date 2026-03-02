@@ -5,7 +5,7 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 import java.util.Calendar;
-
+import java.text.DecimalFormat;
 /**
  User interface class to process command lines
  @author Ysabella Llanos, Kevin Toan
@@ -161,7 +161,41 @@ public class Frontend {
      * @param input
      */
     private void setSCHOLARSHIP_CMD(String input){
-        System.out.println("adding scholarship");
+        try
+        {
+            Student student = findStudent(input);
+            StringTokenizer tokenizer = new StringTokenizer(input);
+            String scholarshipString = "";
+            DecimalFormat df = new DecimalFormat("$#,##0");
+            int scholarship;
+            //get last token
+            while (tokenizer.hasMoreTokens()) {
+                scholarshipString = tokenizer.nextToken();
+            }
+            if(student instanceof Resident)
+            {
+                try{
+                    scholarship = Integer.parseInt(scholarshipString);
+                } catch(NumberFormatException exception){
+                    throw new Exception("INVALID: amount is not an integer.");
+                }
+
+                if(scholarship < 1 || scholarship > 10000) throw new Exception ("INVALID: scholarship amount cannot be 0 or negative or greater than $10,000");
+                if(getCurrCredits(student) < 12) throw new Exception(student.getProfile().toString() + " enrolled in less than 12 credits, not eligible for the scholarship.");
+
+                ((Resident) student).setScholarship(scholarship);
+                String formattedScholarship = df.format(scholarship);
+                System.out.println("Scholarship " + formattedScholarship + " updated for " + student.getProfile().toString());
+            }
+            else {
+                throw new Exception(student.getProfile().toString() + " is a non-resident not eligible for the scholarship.");
+            }
+
+        } catch (Exception exception) {
+            System.out.println(exception.getMessage());
+
+        }
+
     }
     /**
      * Removes student from valid list of students
@@ -659,6 +693,22 @@ public class Frontend {
         }
 
         throw new Exception("INVALID: " + course.name() + " " + period.getStart() + " does not exist.");
+    }
+
+    private int getCurrCredits(Student student)
+    {
+        int creditCount = 0;
+        //loop thru all sections
+        for(int i = 0; i < schedule.size(); i++)
+        {
+            Section currSection = schedule.get(i);
+            if(currSection.getRoster().contains((student)))
+            {
+                //if student is in section, increase the number of credits
+                creditCount += currSection.getCourse().getCreditHours();
+            }
+        }
+        return creditCount;
     }
     /*
 ===========================================================
