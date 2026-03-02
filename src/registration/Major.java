@@ -16,4 +16,12 @@ public enum Major {
     public String getSchool(){
         return this.school;
     }
+
+    public static Major fromString(String majorString) throws Exception{
+        try{
+            return Major.valueOf(majorString.toUpperCase());
+        }catch(IllegalArgumentException e){
+            throw new Exception("INVALID: " + majorString + " major doesn't exist.");
+        }
+    }
 }
