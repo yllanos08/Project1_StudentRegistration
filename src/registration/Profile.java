@@ -20,12 +20,26 @@ public class Profile implements Comparable<Profile> {
         this.dob = dob;
     }
 
+    /**
+     Get first name of student
+     * @return first name String
+     */
     public String getFname(){
         return fname;
     }
+
+    /**
+     Get last name of student
+     * @return last name String
+     */
     public String getLname(){
         return lname;
     }
+
+    /**
+     Get DOB of student
+     * @return DOB Date
+     */
     public Date getDob(){
         return dob;
     }

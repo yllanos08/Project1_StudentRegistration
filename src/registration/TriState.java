@@ -1,5 +1,10 @@
 package registration;
 
+/**
+ Tristate class extends NonResident, for students that are from NY/CT
+ @author Ysabella Llanos, Kevin Toan
+ */
+
 public class TriState extends NonResident{
     private String state;
     private final double NY_DISCOUNT = 4000;

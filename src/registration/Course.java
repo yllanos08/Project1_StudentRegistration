@@ -1,4 +1,8 @@
 package registration;
+/**
+ Enum class of possible courses
+ @author Ysabella Llanos, Kevin Toan
+ */
 
 import java.util.StringTokenizer;
 
@@ -40,7 +44,7 @@ public enum Course {
     }
 
     /**
-     *
+     *Gets the major preReq as a String
      * @return only the major abbreviation
      */
     public String getMajorPrereq() {

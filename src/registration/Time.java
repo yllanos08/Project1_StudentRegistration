@@ -1,5 +1,10 @@
 package registration;
 
+/**
+ Enum class for possible class periods
+ @author Ysabella Llanos, Kevin Toan
+ */
+
 
 public enum Time {
     PERIOD1("8:30", "9:50"),

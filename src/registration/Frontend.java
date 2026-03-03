@@ -43,6 +43,10 @@ public class Frontend {
     StudentList studentList = new StudentList();
 
     // keep under 40 lines
+
+    /**
+     Run registration system. &gt3&ls
+     */
     public void run(){
         String onRunMsg = "Registration System is Running";
         System.out.println(onRunMsg);
@@ -538,20 +542,6 @@ public class Frontend {
     }
 
     /**
-     Check if given major is valid
-     * @param name major to be checked
-     * @return true if major found in enum, false otherwise
-     */
-    private static boolean isValidMajor(String name)
-    {
-        for(Major major: Major.values())
-        {
-            if(major.name().equalsIgnoreCase(name)) return true;
-        }
-        return false;
-    }
-
-    /**
      Get Time using int
      * @param p integer version of period
      * @return period as a Time enum
@@ -616,41 +606,6 @@ public class Frontend {
         }
         throw new Exception("INVALID: [" + fname + " " + lname + " " + dobString +  "]" + " does not exist.");
     }
-//    /**
-//     Fill student attributes using input
-//     * @param input input provided
-//     * @param student student to be made/finished
-//     */
-//    private static String makeStudent(String input, Student student) throws Exception
-//    {
-//        StringTokenizer s =  new StringTokenizer(input);
-//        String fname = s.nextToken();
-//        String lname = s.nextToken();
-//        String dobString = s.nextToken();
-//        String majorString = s.nextToken().toUpperCase();
-//        int creditsCompleted = Integer.parseInt(s.nextToken());
-//        //check and make major
-//        Major major;
-//        if(isValidMajor(majorString))
-//        {
-//            major = Major.fromString(majorString);
-//        }
-//        else return majorString;
-//
-//        StringTokenizer dobToken = new StringTokenizer(dobString);
-//        int month = Integer.parseInt(dobToken.nextToken("/"));
-//        int day = Integer.parseInt(dobToken.nextToken("/"));
-//        int year = Integer.parseInt(dobToken.nextToken("/"));
-//
-//        Date dob = new Date(year, month, day);
-//
-//        Profile addedProfile = new Profile (fname, lname, dob);
-//
-//        student.setProfile(addedProfile);
-//        student.setMajor(major);
-//        student.setCreditsCompleted(creditsCompleted);
-//        return majorString;
-//    }
 
     /**
      * Checks if a given course is valid for the period given
@@ -742,18 +697,6 @@ public class Frontend {
         return true;
     }
 
-//    /**
-//     * Is the student valid, ie does makestudent student
-//     * @param student student to be checked
-//     * @return T if valid, F if false
-//     */
-//    private boolean isValidStudent(String student){
-//        Student currStudent = new Student();
-//        makeStudent(student,currStudent);
-//        if(currStudent.getSchoolYear().isEmpty())return false;
-//        return true;
-//    }
-
     /**
      * Finds section if it exists
      * @param courseString course code as a string
@@ -778,6 +721,11 @@ public class Frontend {
         throw new Exception("INVALID: " + course.name() + " " + period.getStart() + " does not exist.");
     }
 
+    /**
+     Returns the current amount of credits a student is taking
+     * @param student student being checked
+     * @return number of credits as int
+     */
     private int getCurrCredits(Student student)
     {
         int creditCount = 0;

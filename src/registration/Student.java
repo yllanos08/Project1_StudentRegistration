@@ -1,7 +1,7 @@
 package registration;
 
 /**
- * Student obj with Profile, major, & credits completed
+ * Student obj with Profile, major, &amp credits completed
  * @author Kevin Toan, Ysabella Llanos
  */
 
@@ -15,7 +15,18 @@ public abstract class Student implements Comparable<Student> {
     private final int JUNIOR = 90;
     protected final double FULLTIME_UNVERSITYFEE = 3891;
     protected final double PARTTIME_UNIVERSITYFEE = FULLTIME_UNVERSITYFEE/2;
+
+    /**
+     Abstract method to calculate tuitions
+     * @param creditsEnrolled # of credits that students are enrolled in
+     * @return (double) tuition value
+     */
     public abstract double tuition(int creditsEnrolled);
+
+    /**
+     Abstract method to getType of student child it is.
+     * @return (string) type of student child
+     */
     public abstract String getType();
     /**
      Parameterized Constructor
@@ -69,7 +80,7 @@ public abstract class Student implements Comparable<Student> {
     }
 
     /**
-     * finds school year of student < 30 = fresh, < 60 = soph, <90 = junior, 90+ = senior
+     * finds school year of student &lt 30 = fresh, &lt 60 = soph, &lt90 = junior, 90+ = senior
      * @return school year of student in a String
      */
     public String getSchoolYear(){

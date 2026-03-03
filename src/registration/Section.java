@@ -31,12 +31,40 @@ public class Section {
         numStudents = 0;
     }
 
+    /**
+     Get course
+     * @return course object
+     */
     public Course getCourse(){return this.course;}
+
+    /**
+     Get instructor
+     * @return instructor object
+     */
     public Instructor getInstructor(){return this.instructor;}
+
+    /**
+     Get classroom
+     * @return classroom object
+     */
     public Classroom getClassroom(){return this.classroom;}
+
+    /**
+     Get period
+     * @return period Time object
+     */
     public Time getPeriod() {return this.time;}
+
+    /**
+     Get roster
+     * @return roster StudentList object
+     */
     public StudentList getRoster() {return this.roster;}
 
+    /**
+     Get number of students
+     * @return number of students int
+     */
     public int getNumStudents(){return roster.size();}
 
 
@@ -46,7 +74,6 @@ public class Section {
      * enroll student into class if class isn't full (doesn't check requirements)
      * @param student - student TBE (to be enrolled)
      */
-
     public void enroll(Student student) throws Exception {
 
         if(isFull()) throw new Exception("Cannot enroll " + "[" + student.getProfile().getFname() + " " + student.getProfile().getLname() + " "

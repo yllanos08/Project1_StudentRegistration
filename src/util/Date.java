@@ -35,9 +35,9 @@ public class Date implements Comparable <Date>
 
     /**
         Parameterized constructor with 3 arguments.
-     * @param year
-     * @param month
-     * @param day
+     * @param year int of year
+     * @param month int of month
+     * @param day int of day
      */
     public Date (int year, int month, int day)
     {
@@ -117,7 +117,7 @@ public class Date implements Comparable <Date>
         return false;
     }
     /**
-
+     Checks if date is a valid day
      * @return true if the given date is valid, false otherwise
      */
     public boolean isValid() {

@@ -1,5 +1,9 @@
 package registration;
 
+/**
+ Enum class of possible classrooms
+ @author Ysabella Llanos, Kevin Toan
+ */
 public enum Classroom {
     HIL114 ("Hill Center", "Busch"),
     ARC103 ("Allison Road Classroom", "Busch"),

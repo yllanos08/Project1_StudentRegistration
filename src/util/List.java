@@ -4,7 +4,7 @@ import java.util.Iterator;
 
 /**
  Generic List class
- * @param <E>
+ * @param <E> Obj for list
  * @author Ysabella Llanos, Kevin Toan
  */
 public class List <E> implements Iterable <E>{

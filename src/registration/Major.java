@@ -1,5 +1,10 @@
 package registration;
 
+/**
+ Enum class of possible Majors
+ @author Ysabella Llanos, Kevin Toan
+ */
+
 public enum Major {
     CS ("School of Arts & Sciences"),
     ECE ("School of Engineering"),
