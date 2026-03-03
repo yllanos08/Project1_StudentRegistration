@@ -5,8 +5,8 @@ package registration;
  @author Ysabella Llanos, Kevin Toan
  */
 public class NonResident extends Student{
-    private final int FULLTIME_TUITION = 35758;
-    private final int PARTTIME_TUITION_PERCREDIT = 1162;
+    protected final int FULLTIME_TUITION = 35758;
+    protected final int PARTTIME_TUITION_PERCREDIT = 1162;
 
     NonResident(Profile profile, Major major, int creditsCompleted){
         super(profile, major, creditsCompleted);

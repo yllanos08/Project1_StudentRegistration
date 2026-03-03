@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ResidentTest {
 
     @Test
-    public void fullTimeStudent(){
+    public void fullTimeStudentTest(){
         try{
             Date dob = new Date(2005,07,20);
             Profile profile = new Profile("Ving", "Dang", dob);
@@ -22,7 +22,7 @@ class ResidentTest {
         }
     }
     @Test
-    public void partTimeStudent(){
+    public void partTimeStudentTest(){
         try{
             Date dob = new Date(2005,07,20);
             Profile profile = new Profile("Ving", "Dang", dob);
@@ -36,7 +36,7 @@ class ResidentTest {
         }
     }
     @Test
-    public void scholarshipStudent(){
+    public void scholarshipStudentTest(){
         try{
             Date dob = new Date(2005,07,20);
             Profile profile = new Profile("Ving", "Dang", dob);
