@@ -40,10 +40,9 @@ public class International extends NonResident{
     @Override
     public double tuition(int creditsEnrolled){
         double finalTuition = 0;
-        if(!isStudyAbroad) finalTuition = super.tuition(creditsEnrolled);
-        else {
-            finalTuition += FULLTIME_UNVERSITYFEE;
-        }
+        if(creditsEnrolled < 1) return 0.0;
+        if(isStudyAbroad) finalTuition += FULLTIME_UNVERSITYFEE;
+        else finalTuition = super.tuition(creditsEnrolled);
         finalTuition += ADMIN_FEE;
         finalTuition += HEALTHINSURANCE_FEE;
         return finalTuition;
